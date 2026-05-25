@@ -1,19 +1,41 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from './lib/supabase'; // Required import
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // NEW: Add state for the workspace name
   const [workspaceName, setWorkspaceName] = useState('Modern Studio'); 
+  const [loading, setLoading] = useState(true); // Required to prevent flash on refresh
+
+  // Required: Listen for Supabase Auth changes
+  useEffect(() => {
+    // Check current session on load
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setIsAuthenticated(!!session);
+      setLoading(false);
+    });
+
+    // Listen for sign-in/sign-out events
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setIsAuthenticated(!!session);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const login = (userData) => {
     setUser(userData);
     setIsAuthenticated(true);
   };
 
-  const logout = () => {
+  // Required: Update logout to talk to Supabase
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
     setIsAuthenticated(false);
   };
@@ -24,10 +46,11 @@ export const AuthProvider = ({ children }) => {
       isAuthenticated, 
       login, 
       logout, 
-      workspaceName, // Export this
-      setWorkspaceName // Export this
+      workspaceName, 
+      setWorkspaceName 
     }}>
-      {children}
+      {/* Required: Don't render app until we know if user is logged in */}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

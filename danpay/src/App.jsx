@@ -1,3 +1,4 @@
+import toast, { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from "./AuthContext";
 import AuthFlow from "./AuthFlow";
 
@@ -112,7 +113,6 @@ const ShareDrawer = ({ isOpen, onClose, item, type, brandColor, currencySymbol }
   const [copied, setCopied] = useState(false);
   const [sent, setSent] = useState(false);
 
-  // Generate a deterministic shareable link from item id
   const shareLink = item ? `https://danpay.app/view/${type === 'receipt' ? 'rct' : 'inv'}-${item.id?.toLowerCase?.() || item.id}` : '';
 
   const handleCopy = () => {
@@ -121,7 +121,6 @@ const ShareDrawer = ({ isOpen, onClose, item, type, brandColor, currencySymbol }
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Add email to recipient list after basic validation
   const addEmail = () => {
     const trimmed = emailInput.trim();
     if (trimmed && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed) && !emailList.includes(trimmed)) {
@@ -132,7 +131,6 @@ const ShareDrawer = ({ isOpen, onClose, item, type, brandColor, currencySymbol }
 
   const removeEmail = (email) => setEmailList(emailList.filter(e => e !== email));
 
-  // Simulate sending — shows success state then closes the drawer
   const handleSend = () => {
     if (emailList.length === 0) return;
     setSent(true);
@@ -145,14 +143,12 @@ const ShareDrawer = ({ isOpen, onClose, item, type, brandColor, currencySymbol }
     <AnimatePresence>
       {isOpen && item && (
         <>
-          {/* Backdrop overlay — clicking closes the drawer */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={handleClose} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-[80]" />
           <motion.div
             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="fixed right-0 top-0 h-full w-full max-w-[440px] bg-white border-l border-[#E1E1E1] z-[90] flex flex-col"
           >
-            {/* Drawer header with item reference */}
             <div className="flex justify-between items-center p-8 border-b border-[#E1E1E1]">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mb-1">Share {type === 'receipt' ? 'Receipt' : 'Invoice'}</p>
@@ -162,7 +158,6 @@ const ShareDrawer = ({ isOpen, onClose, item, type, brandColor, currencySymbol }
             </div>
 
             <div className="flex-1 overflow-y-auto p-8 space-y-8">
-              {/* Shareable link section — one-click copy */}
               <div className="space-y-3">
                 <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Shareable Link</p>
                 <div className="flex items-center gap-2">
@@ -181,7 +176,6 @@ const ShareDrawer = ({ isOpen, onClose, item, type, brandColor, currencySymbol }
                 <p className="text-[11px] text-[#6B7280]">Anyone with this link can view the {type === 'receipt' ? 'receipt' : 'invoice'}.</p>
               </div>
 
-              {/* Send via email section — supports multiple recipients */}
               <div className="space-y-3">
                 <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Send via Email</p>
                 <div className="flex gap-2">
@@ -196,7 +190,6 @@ const ShareDrawer = ({ isOpen, onClose, item, type, brandColor, currencySymbol }
                   <button onClick={addEmail} className="h-[44px] px-4 rounded-[8px] border border-[#E1E1E1] text-sm font-bold text-[#6B7280] hover:bg-[#FAFAFA] transition-colors">Add</button>
                 </div>
 
-                {/* Email recipient pill chips */}
                 {emailList.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {emailList.map(email => (
@@ -208,7 +201,6 @@ const ShareDrawer = ({ isOpen, onClose, item, type, brandColor, currencySymbol }
                   </div>
                 )}
 
-                {/* Message preview box shown when recipients are added */}
                 {emailList.length > 0 && (
                   <div className="p-4 bg-[#FAFAFA] border border-[#E1E1E1] rounded-lg text-xs text-[#6B7280] space-y-1">
                     <p className="font-bold text-[#010101]">Message preview</p>
@@ -219,7 +211,6 @@ const ShareDrawer = ({ isOpen, onClose, item, type, brandColor, currencySymbol }
               </div>
             </div>
 
-            {/* Send CTA — disabled until at least one recipient is added */}
             <div className="p-8 border-t border-[#E1E1E1]">
               <button
                 onClick={handleSend}
@@ -238,8 +229,7 @@ const ShareDrawer = ({ isOpen, onClose, item, type, brandColor, currencySymbol }
 };
 
 // ─────────────────────────────────────────────
-// FAB: Mobile floating action button to create invoice or add client
-// Only visible on mobile (md:hidden) — expands to reveal sub-actions
+// FAB: Mobile floating action button
 // ─────────────────────────────────────────────
 const FAB = ({ brandColor, onNewInvoice, onNewClient }) => {
   const [fabOpen, setFabOpen] = useState(false);
@@ -249,7 +239,6 @@ const FAB = ({ brandColor, onNewInvoice, onNewClient }) => {
       <AnimatePresence>
         {fabOpen && (
           <>
-            {/* Sub-action: Add new client */}
             <motion.button
               initial={{ opacity: 0, y: 10, scale: 0.8 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.8 }}
               transition={{ delay: 0.05 }}
@@ -259,7 +248,6 @@ const FAB = ({ brandColor, onNewInvoice, onNewClient }) => {
             >
               <UserPlus size={16} /> New Client
             </motion.button>
-            {/* Sub-action: Create new invoice */}
             <motion.button
               initial={{ opacity: 0, y: 10, scale: 0.8 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.8 }}
               transition={{ delay: 0 }}
@@ -272,7 +260,6 @@ const FAB = ({ brandColor, onNewInvoice, onNewClient }) => {
           </>
         )}
       </AnimatePresence>
-      {/* Main FAB button — rotates to X when open */}
       <motion.button
         onClick={() => setFabOpen(!fabOpen)}
         className="w-14 h-14 rounded-full text-white flex items-center justify-center"
@@ -287,8 +274,7 @@ const FAB = ({ brandColor, onNewInvoice, onNewClient }) => {
 };
 
 // ─────────────────────────────────────────────
-// ESCROW ACCOUNT GENERATOR: Creates a unique virtual receiving account per invoice
-// Uses a deterministic seed from the invoice ID so the same account is reproducible
+// ESCROW ACCOUNT GENERATOR
 // ─────────────────────────────────────────────
 const generateEscrowAccount = (invoiceId) => {
   const seed = invoiceId.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
@@ -297,28 +283,26 @@ const generateEscrowAccount = (invoiceId) => {
   return {
     routingNumber: routing,
     accountNumber: account,
-    bankName: 'DanPay Escrow Bank',
-    accountName: 'DanPay Escrow Services LLC',
-    reference: `ESC-${invoiceId}`,
-    status: 'active', // possible states: active | funded | released
+    bankName: 'DanPay Virtual Bank',
+    accountName: 'DanPay Virtual Account Services',
+    reference: `VTA-${invoiceId}`,
+    status: 'active',
   };
 };
 
 // ─────────────────────────────────────────────
-// ESCROW BADGE: Small pill shown on invoices that have escrow enabled
+// ESCROW BADGE
 // ─────────────────────────────────────────────
 const EscrowBadge = () => (
   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-50 text-purple-600 text-[10px] font-bold uppercase tracking-wider border border-purple-100">
-    <Landmark size={10} /> Escrow
+    <Landmark size={10} /> Virtual Account
   </span>
 );
 
 // ─────────────────────────────────────────────
-// PRICING MODAL: Full-screen overlay showing Free / Individual / Organisation plans
-// Triggered by clicking the free plan usage card or upgrade CTA in the sidebar
+// PRICING MODAL
 // ─────────────────────────────────────────────
 const PricingModal = ({ isOpen, onClose, brandColor }) => {
-  // Plan definitions — each has a label, price, description, feature list, and CTA text
   const plans = [
     {
       id: 'free',
@@ -353,7 +337,7 @@ const PricingModal = ({ isOpen, onClose, brandColor }) => {
       ],
       cta: 'Upgrade to Individual',
       isCurrent: false,
-      highlight: true, // visually highlighted as the recommended plan
+      highlight: true,
     },
     {
       id: 'organisation',
@@ -380,23 +364,20 @@ const PricingModal = ({ isOpen, onClose, brandColor }) => {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Full-screen backdrop — clicking outside closes the modal */}
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={onClose}
             className="fixed inset-0 bg-black/30 backdrop-blur-sm z-[100]"
           />
-          {/* Centered modal card */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-8"
-            onClick={e => e.stopPropagation()} // prevent backdrop click from bubbling
+            onClick={e => e.stopPropagation()}
           >
             <div className="bg-white rounded-2xl border border-[#E1E1E1] w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-              {/* Modal header */}
               <div className="flex items-center justify-between p-8 border-b border-[#E1E1E1]">
                 <div>
                   <h2 className="text-2xl font-bold text-[#010101]">Choose your plan</h2>
@@ -407,7 +388,6 @@ const PricingModal = ({ isOpen, onClose, brandColor }) => {
                 </button>
               </div>
 
-              {/* Plan cards — responsive 1-col on mobile, 3-col on desktop */}
               <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
                 {plans.map(plan => (
                   <div
@@ -418,7 +398,6 @@ const PricingModal = ({ isOpen, onClose, brandColor }) => {
                         : 'border-[#E1E1E1] bg-white'
                     }`}
                   >
-                    {/* Recommended badge — only on the highlighted plan */}
                     {plan.highlight && (
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                         <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-white" style={{ backgroundColor: brandColor }}>
@@ -427,7 +406,6 @@ const PricingModal = ({ isOpen, onClose, brandColor }) => {
                       </div>
                     )}
 
-                    {/* Plan label and price */}
                     <div>
                       <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] mb-2">{plan.label}</p>
                       <div className="flex items-end gap-1">
@@ -437,7 +415,6 @@ const PricingModal = ({ isOpen, onClose, brandColor }) => {
                       <p className="text-sm text-[#6B7280] mt-2 leading-relaxed">{plan.description}</p>
                     </div>
 
-                    {/* Feature list with checkmarks */}
                     <ul className="space-y-3 flex-1">
                       {plan.features.map(feat => (
                         <li key={feat} className="flex items-start gap-2.5 text-sm">
@@ -447,7 +424,6 @@ const PricingModal = ({ isOpen, onClose, brandColor }) => {
                       ))}
                     </ul>
 
-                    {/* Plan CTA button — disabled/greyed for current plan */}
                     <button
                       onClick={() => { if (!plan.isCurrent) alert(`Upgrade to ${plan.label} — payment flow coming soon!`); }}
                       disabled={plan.isCurrent}
@@ -466,7 +442,6 @@ const PricingModal = ({ isOpen, onClose, brandColor }) => {
                 ))}
               </div>
 
-              {/* Footer note */}
               <div className="px-8 pb-8 text-center">
                 <p className="text-xs text-[#6B7280]">All paid plans include a 14-day free trial. No credit card required to start.</p>
               </div>
@@ -485,56 +460,45 @@ function DanPay() {
 
 const { workspaceName } = useAuth();
 
-  // ── Core navigation & UI state ──
   const [currentView, setCurrentView] = useState('dashboard');
   const [activeSettingsTab, setActiveSettingsTab] = useState('general');
   const [isClientDrawerOpen, setIsClientDrawerOpen] = useState(false);
   const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false);
 
-  // ── Data lists ──
   const [invoices, setInvoices] = useState([]);
   const [clients, setClients] = useState([]);
 
-  // ── Detail drawer state for invoice, receipt, client ──
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [selectedReceipt, setSelectedReceipt] = useState(null);
   const [selectedClient, setSelectedClient] = useState(null);
   const [reminderSent, setReminderSent] = useState({});
   const [editClientDraft, setEditClientDraft] = useState(null);
 
-  // ── Share drawer state (which item + its type) ──
   const [shareItem, setShareItem] = useState(null);
   const [shareType, setShareType] = useState('invoice');
 
-  // ── Filter state for invoices list ──
   const [invoiceSearch, setInvoiceSearch] = useState('');
   const [invoiceStatusFilter, setInvoiceStatusFilter] = useState('all');
   const [invoiceTypeFilter, setInvoiceTypeFilter] = useState('all');
 
-  // ── Filter state for receipts list ──
   const [receiptSearch, setReceiptSearch] = useState('');
   const [receiptDateFilter, setReceiptDateFilter] = useState('all');
 
-  // ── Sub-tab within the Invoices view on mobile ('invoices' | 'receipts') ──
   const [invoiceMobileTab, setInvoiceMobileTab] = useState('invoices');
 
-  // ── Filter state for clients list ──
   const [clientSearch, setClientSearch] = useState('');
 
-  // ── Pricing modal visibility ──
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
-  // ── Wallet state — balance, transactions, saved cards, active sub-tab ──
   const [walletBalance, setWalletBalance] = useState(0);
   const [walletTransactions, setWalletTransactions] = useState([]);
   const [walletCards, setWalletCards] = useState([]);
-  const [walletTab, setWalletTab] = useState('overview'); // overview | withdraw | add-card | pay
+  const [walletTab, setWalletTab] = useState('overview');
   const [walletCardDraft, setWalletCardDraft] = useState({ number: '', name: '', expiry: '', cvv: '' });
   const [walletPayDraft, setWalletPayDraft] = useState({ recipient: '', amount: '', note: '' });
   const [walletWithdrawDraft, setWalletWithdrawDraft] = useState({ amount: '', method: 'bank' });
   const [walletActionFeedback, setWalletActionFeedback] = useState('');
 
-  // ── New invoice form draft state (reset after submission) ──
   const [invoiceDraft, setInvoiceDraft] = useState({ 
     client: '', 
     issueDate: new Date().toISOString().split('T')[0],
@@ -544,11 +508,9 @@ const { workspaceName } = useAuth();
     tax: 0,
     notes: '',
     type: 'one-time',
-    escrowEnabled: false, // when true, a unique virtual account is generated for this invoice
+    escrowEnabled: true,
   });
 
-  // ── Workspace settings (business name, currency, brand color, etc.) ──
-   // UPDATED: Initializing with workspaceName from Context
   const [settings, setSettings] = useState({
     businessName: workspaceName || 'Modern Studio',
     currency: 'USD',
@@ -557,15 +519,12 @@ const { workspaceName } = useAuth();
     location: 'London, UK'
   });
 
-  // ADDED: This ensures that if the workspace name is updated in the context 
-  // (during onboarding), it reflects immediately in the settings state.
   useEffect(() => {
     if (workspaceName) {
       setSettings(prev => ({ ...prev, businessName: workspaceName }));
     }
   }, [workspaceName]);
 
-  // ── Payout/bank settings used for Escrow withdrawals ──
   const [payoutSettings, setPayoutSettings] = useState({
     taxId: '',
     bankName: '',
@@ -575,16 +534,12 @@ const { workspaceName } = useAuth();
     verifying: false,
   });
 
-  // ── Members list for workspace member management ──
   const [members, setMembers] = useState([
     { id: 1, name: 'You (Owner)', email: 'owner@modernstudio.com', role: 'Owner', status: 'active' }
   ]);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteSent, setInviteSent] = useState(false);
 
-  // ─────────────────────────────────────────────
-  // COMPUTED: Invoice line items subtotal, tax amount, and grand total
-  // ─────────────────────────────────────────────
   const subtotal = useMemo(() => 
     invoiceDraft.items.reduce((acc, item) => acc + (item.qty * item.rate), 0)
   , [invoiceDraft.items]);
@@ -592,17 +547,11 @@ const { workspaceName } = useAuth();
   const taxAmount = (subtotal * (invoiceDraft.tax / 100));
   const grandTotal = (subtotal + taxAmount - invoiceDraft.discount);
 
-  // ─────────────────────────────────────────────
-  // COMPUTED: Currency symbol based on settings.currency
-  // ─────────────────────────────────────────────
   const currencySymbol = useMemo(() => {
     const symbols = { USD: '$', EUR: '€', GBP: '£', JPY: '¥' };
     return symbols[settings.currency] || '$';
   }, [settings.currency]);
 
-  // ─────────────────────────────────────────────
-  // COMPUTED: Filtered invoice list applying search + status + type filters
-  // ─────────────────────────────────────────────
   const filteredInvoices = useMemo(() => {
     return invoices.filter(inv => {
       const matchesSearch = !invoiceSearch || 
@@ -614,9 +563,6 @@ const { workspaceName } = useAuth();
     });
   }, [invoices, invoiceSearch, invoiceStatusFilter, invoiceTypeFilter]);
 
-  // ─────────────────────────────────────────────
-  // COMPUTED: Only paid invoices are surfaced in the Receipts view
-  // ─────────────────────────────────────────────
   const paidInvoices = useMemo(() => invoices.filter(i => i.status === 'Paid'), [invoices]);
 
   const filteredReceipts = useMemo(() => {
@@ -628,9 +574,6 @@ const { workspaceName } = useAuth();
     });
   }, [paidInvoices, receiptSearch]);
 
-  // ─────────────────────────────────────────────
-  // COMPUTED: Filtered clients list by name, email, or company
-  // ─────────────────────────────────────────────
   const filteredClients = useMemo(() => {
     return clients.filter(c => {
       return !clientSearch ||
@@ -640,10 +583,6 @@ const { workspaceName } = useAuth();
     });
   }, [clients, clientSearch]);
 
-  // ─────────────────────────────────────────────
-  // COMPUTED: Count invoices sent this month for the free plan usage indicator
-  // Free plan is capped at 10 invoices per calendar month
-  // ─────────────────────────────────────────────
   const invoicesThisMonth = useMemo(() => {
     const now = new Date();
     return invoices.filter(inv => {
@@ -656,37 +595,50 @@ const { workspaceName } = useAuth();
   const invoicesRemaining = Math.max(0, FREE_PLAN_LIMIT - invoicesThisMonth);
   const usagePct = Math.min(100, (invoicesThisMonth / FREE_PLAN_LIMIT) * 100);
 
-  // ─────────────────────────────────────────────
-  // HANDLER: Add new client from the client drawer form
-  // ─────────────────────────────────────────────
   const handleAddClient = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
+    const name = formData.get('clientName');
+    const email = formData.get('clientEmail');
+    
+    if (!name) {
+      toast.error('Client name is required');
+      return;
+    }
+    if (!email) {
+      toast.error('Client email is required');
+      return;
+    }
+    
     const newClient = { 
       id: Date.now(), 
-      name: formData.get('clientName'), 
-      email: formData.get('clientEmail'), 
+      name, 
+      email, 
       location: formData.get('clientLocation') || settings.location,
       company: formData.get('clientCompany') || '',
       address: formData.get('clientAddress') || '',
     };
-    if (!newClient.name) return;
     setClients([...clients, newClient]);
     setIsClientDrawerOpen(false);
     e.target.reset();
+    toast.success('Client added successfully!');
   };
 
-  // ─────────────────────────────────────────────
-  // HANDLER: Create invoice — optionally attaches an escrow account
-  // Resets the draft form after a successful submission
-  // ─────────────────────────────────────────────
   const handleCreateInvoice = (e) => {
     e.preventDefault();
+    if (!invoiceDraft.client) {
+      toast.error('Please select a client');
+      return;
+    }
+    const validItems = invoiceDraft.items.filter(i => i.desc.trim() !== '' && i.rate > 0);
+    if (validItems.length === 0) {
+      toast.error('Please add at least one line item with a description and rate');
+      return;
+    }
     const newId = `INV-${1001 + invoices.length}`;
     const newInv = {
       id: newId,
       client: invoiceDraft.client,
-      // Look up client email from the clients array for display in detail views
       clientEmail: clients.find(c => c.name === invoiceDraft.client)?.email || '',
       amount: grandTotal,
       date: invoiceDraft.issueDate,
@@ -697,19 +649,14 @@ const { workspaceName } = useAuth();
       discount: invoiceDraft.discount,
       tax: invoiceDraft.tax,
       notes: invoiceDraft.notes,
-      // Generate a unique escrow account if the toggle is enabled, otherwise null
-      escrow: invoiceDraft.escrowEnabled ? generateEscrowAccount(newId) : null,
+      escrow: generateEscrowAccount(newId),
     };
     setInvoices([newInv, ...invoices]);
+    toast.success('Invoice created successfully!');
     setCurrentView('invoices');
-    // Reset draft to clean defaults for the next invoice
-    setInvoiceDraft({ client: '', issueDate: new Date().toISOString().split('T')[0], dueDate: '', items: [{ id: 1, desc: '', qty: 1, rate: 0 }], discount: 0, tax: 0, notes: '', type: 'one-time', escrowEnabled: false });
+    setInvoiceDraft({ client: '', issueDate: new Date().toISOString().split('T')[0], dueDate: '', items: [{ id: 1, desc: '', qty: 1, rate: 0 }], discount: 0, tax: 0, notes: '', type: 'one-time', escrowEnabled: true });
   };
 
-  // ─────────────────────────────────────────────
-  // HANDLER: Simulate bank account verification for payout settings
-  // Shows a 2-second loading state then marks the account as verified
-  // ─────────────────────────────────────────────
   const handleBankVerification = () => {
     setPayoutSettings(p => ({ ...p, verifying: true, verified: false }));
     setTimeout(() => {
@@ -717,16 +664,12 @@ const { workspaceName } = useAuth();
     }, 2000);
   };
 
-  // ─────────────────────────────────────────────
-  // HANDLER: Send workspace invite (simulated — free plan users hit an upgrade gate)
-  // ─────────────────────────────────────────────
   const handleSendInvite = () => {
     if (!inviteEmail.trim()) return;
     setInviteSent(true);
     setTimeout(() => { setInviteSent(false); setInviteEmail(''); }, 2500);
   };
 
-  // Add an empty line item row to the invoice draft
   const addLineItem = () => {
     setInvoiceDraft({
       ...invoiceDraft,
@@ -734,10 +677,6 @@ const { workspaceName } = useAuth();
     });
   };
 
-  // ─────────────────────────────────────────────
-  // HANDLER: Wallet — save a new card to the wallet
-  // Extracts the last 4 digits for display; stores brand as Visa placeholder
-  // ─────────────────────────────────────────────
   const handleAddCard = () => {
     if (!walletCardDraft.number || !walletCardDraft.name || !walletCardDraft.expiry) return;
     const last4 = walletCardDraft.number.replace(/\s/g, '').slice(-4);
@@ -748,10 +687,6 @@ const { workspaceName } = useAuth();
     setTimeout(() => setWalletActionFeedback(''), 3000);
   };
 
-  // ─────────────────────────────────────────────
-  // HANDLER: Wallet — withdraw funds to a linked bank account
-  // Deducts amount from balance and logs a withdraw transaction
-  // ─────────────────────────────────────────────
   const handleWithdraw = () => {
     const amt = Number(walletWithdrawDraft.amount);
     if (!amt || amt > walletBalance) return;
@@ -763,10 +698,6 @@ const { workspaceName } = useAuth();
     setTimeout(() => setWalletActionFeedback(''), 3000);
   };
 
-  // ─────────────────────────────────────────────
-  // HANDLER: Wallet — send payment directly to a named recipient
-  // Deducts amount from balance and logs a pay transaction
-  // ─────────────────────────────────────────────
   const handleWalletPay = () => {
     const amt = Number(walletPayDraft.amount);
     if (!walletPayDraft.recipient || !amt || amt > walletBalance) return;
@@ -778,10 +709,6 @@ const { workspaceName } = useAuth();
     setTimeout(() => setWalletActionFeedback(''), 3000);
   };
 
-  // ─────────────────────────────────────────────
-  // HANDLER: When an escrow-linked invoice is marked as paid,
-  // automatically credit the wallet balance and log an escrow release transaction
-  // ─────────────────────────────────────────────
   const handleMarkEscrowPaid = (invoice) => {
     if (invoice.escrow) {
       setWalletBalance(b => b + Number(invoice.amount));
@@ -789,9 +716,6 @@ const { workspaceName } = useAuth();
     }
   };
 
-  // ─────────────────────────────────────────────
-  // SIDEBAR NAVIGATION ITEMS — Desktop only (all pages including analytics)
-  // ─────────────────────────────────────────────
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'invoices', label: 'Invoices', icon: FileText },
@@ -802,10 +726,6 @@ const { workspaceName } = useAuth();
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
-  // ─────────────────────────────────────────────
-  // MOBILE NAVIGATION ITEMS — Receipts is hidden (merged into Invoices),
-  // Analytics is desktop-only and excluded from the mobile tab bar
-  // ─────────────────────────────────────────────
   const mobileMenuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'invoices', label: 'Invoices', icon: FileText },
@@ -814,9 +734,6 @@ const { workspaceName } = useAuth();
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
-  // ─────────────────────────────────────────────
-  // STATUS STYLES: Tailwind badge class map for invoice status pills
-  // ─────────────────────────────────────────────
   const statusStyles = {
     Pending: 'bg-yellow-50 text-yellow-600',
     Paid: 'bg-green-50 text-green-600',
@@ -827,24 +744,17 @@ const { workspaceName } = useAuth();
 
   return (
     <div className="flex min-h-screen bg-white text-[#010101] font-['Open_Sauce_Sans',sans-serif]">
+    <Toaster position="top-right" />
 
-      {/* ─────────────────────────────────────────────
-          PRICING MODAL — rendered at the root level so it overlays everything
-          Opened from: the free plan usage card, or the upgrade CTA in sidebar
-          ───────────────────────────────────────────── */}
       <PricingModal
         isOpen={isPricingModalOpen}
         onClose={() => setIsPricingModalOpen(false)}
         brandColor={settings.brandColor}
       />
 
-      {/* ─────────────────────────────────────────────
-          SIDEBAR — desktop only (hidden on mobile via md:flex)
-          Contains: workspace switcher, nav links, free plan usage indicator
-          ───────────────────────────────────────────── */}
+      {/* SIDEBAR — desktop only */}
       <aside className="w-64 border-r border-[#E1E1E1] p-6 hidden md:flex flex-col fixed h-full bg-white z-20">
         
-        {/* WORKSPACE SWITCHER: Dropdown to switch workspace or create new one */}
         <div className="relative mb-10">
           <button 
             onClick={() => setIsWorkspaceOpen(!isWorkspaceOpen)}
@@ -860,7 +770,6 @@ const { workspaceName } = useAuth();
             <ChevronDown size={16} className={`text-[#6B7280] transition-transform ${isWorkspaceOpen ? 'rotate-180' : ''}`} />
           </button>
 
-          {/* Workspace dropdown menu */}
           <AnimatePresence>
             {isWorkspaceOpen && (
               <motion.div 
@@ -879,7 +788,6 @@ const { workspaceName } = useAuth();
           </AnimatePresence>
         </div>
 
-        {/* NAV LINKS: Active page is highlighted with brand color background */}
         <nav className="flex-1 space-y-1">
           {menuItems.map((item) => (
             <button 
@@ -898,9 +806,6 @@ const { workspaceName } = useAuth();
           ))}
         </nav>
 
-        {/* FREE PLAN USAGE INDICATOR
-            Progress bar color transitions to red as the monthly limit approaches.
-            Clicking the card or the upgrade link opens the Pricing modal. */}
         <div
           className="mt-auto p-4 bg-[#FAFAFA] border border-[#E1E1E1] rounded-xl text-left cursor-pointer hover:bg-white transition-colors"
           onClick={() => setIsPricingModalOpen(true)}
@@ -912,7 +817,6 @@ const { workspaceName } = useAuth();
               <span className="text-[9px] font-bold text-red-500 uppercase tracking-wider">Limit reached</span>
             )}
           </div>
-          {/* Progress fill turns red when >= 80% of monthly limit is consumed */}
           <div className="h-1.5 w-full bg-[#E1E1E1] rounded-full mb-2 overflow-hidden">
             <div 
               className="h-full rounded-full transition-all" 
@@ -928,7 +832,6 @@ const { workspaceName } = useAuth();
           {invoicesRemaining > 0 ? (
             <p className="text-[10px] text-[#6B7280] mt-0.5">{invoicesRemaining} remaining</p>
           ) : (
-            // Upgrade CTA shown when the free limit is exhausted — opens pricing modal
             <button 
               onClick={(e) => { e.stopPropagation(); setIsPricingModalOpen(true); }}
               className="mt-2 text-[10px] font-bold underline"
@@ -940,42 +843,55 @@ const { workspaceName } = useAuth();
         </div>
       </aside>
 
-      {/* ─────────────────────────────────────────────
-          MAIN CONTENT AREA — offset by sidebar width on desktop
-          ───────────────────────────────────────────── */}
+      {/* MAIN CONTENT AREA */}
       <main className="flex-1 md:ml-64 min-h-screen flex flex-col">
         
-        {/* STICKY HEADER: Page title + notification bell + avatar */}
         <header className="h-20 border-b border-[#E1E1E1] flex items-center justify-between px-8 bg-white sticky top-0 z-10 text-left">
           <div className="flex items-center gap-4">
-            {/* Back button — only shown on the create invoice view */}
             {currentView === 'create-invoice' && (
-              <button onClick={() => setCurrentView('invoices')} className="p-2 hover:bg-[#FAFAFA] rounded-full border border-[#E1E1E1]"><ArrowLeft size={18} /></button>
+              <button onClick={() => {
+                if (invoiceDraft.client || invoiceDraft.items.some(i => i.desc || i.rate > 0)) {
+                  const draftId = `INV-${1001 + invoices.length}`;
+                  const draft = {
+                    id: draftId,
+                    client: invoiceDraft.client || 'Unknown',
+                    clientEmail: clients.find(c => c.name === invoiceDraft.client)?.email || '',
+                    amount: grandTotal,
+                    date: invoiceDraft.issueDate,
+                    dueDate: invoiceDraft.dueDate,
+                    status: 'Draft',
+                    type: invoiceDraft.type,
+                    items: invoiceDraft.items,
+                    discount: invoiceDraft.discount,
+                    tax: invoiceDraft.tax,
+                    notes: invoiceDraft.notes,
+                    escrow: generateEscrowAccount(draftId),
+                  };
+                  setInvoices([draft, ...invoices]);
+                  toast.success('Invoice saved as draft');
+                }
+                setCurrentView('invoices');
+                setInvoiceDraft({ client: '', issueDate: new Date().toISOString().split('T')[0], dueDate: '', items: [{ id: 1, desc: '', qty: 1, rate: 0 }], discount: 0, tax: 0, notes: '', type: 'one-time', escrowEnabled: true });
+              }} className="p-2 hover:bg-[#FAFAFA] rounded-full border border-[#E1E1E1]"><ArrowLeft size={18} /></button>
             )}
             <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#6B7280]">{currentView.replace('-', ' ')}</h2>
           </div>
           <div className="flex items-center gap-4">
-            {/* Notification bell with unread indicator dot */}
             <button className="p-2 hover:bg-[#FAFAFA] rounded-full border border-[#E1E1E1] relative text-[#3A3A3A]">
               <Bell size={20} />
               <span className="absolute top-2 right-2.5 w-2 h-2 rounded-full border-2 border-white" style={{ backgroundColor: settings.brandColor }} />
             </button>
-            {/* User avatar placeholder */}
             <div className="w-10 h-10 rounded-full border border-[#E1E1E1] bg-gray-50 flex items-center justify-center">
               <Users size={18} className="text-gray-300"/>
             </div>
           </div>
         </header>
 
-        {/* PAGE CONTENT — animated transition between views */}
-        <div className="p-8 max-w-7xl mx-auto w-full pb-24 md:pb-8">
+        <div className="p-4 md:p-8 max-w-7xl mx-auto w-full pb-24 md:pb-8">
           <AnimatePresence mode="wait">
             <motion.div key={currentView} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
 
-              {/* ═══════════════════════════════════════
-                  VIEW: DASHBOARD
-                  Stats cards, recent invoices table, revenue bar, activity feed
-                  ═══════════════════════════════════════ */}
+              {/* DASHBOARD */}
               {currentView === 'dashboard' && (
                 <div className="space-y-8 text-left">
                   <div className="flex justify-between items-end">
@@ -986,11 +902,10 @@ const { workspaceName } = useAuth();
                     <button onClick={() => setCurrentView('create-invoice')} style={{ backgroundColor: settings.brandColor }} className="hidden md:flex text-white px-6 py-3 rounded-lg font-bold items-center gap-2 transition-all"><Plus size={20} /> New Invoice</button>
                   </div>
 
-                  {/* STAT CARDS: Revenue collected, pending invoice count, client count */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {[
                       { label: 'Total Revenue', value: `${currencySymbol}${invoices.reduce((a,b)=>a+Number(b.amount),0).toLocaleString()}`, icon: CreditCard },
-                      { label: 'Pending', value: invoices.length, icon: Clock },
+                      { label: 'Pending', value: invoices.filter(i => i.status === 'Pending').length, icon: Clock },
                       { label: 'Clients', value: clients.length, icon: Users },
                     ].map((stat, i) => (
                       <div key={i} className="p-6 border border-[#E1E1E1] rounded-xl bg-white">
@@ -1001,12 +916,10 @@ const { workspaceName } = useAuth();
                     ))}
                   </div>
 
-                  {/* Empty state shown when no invoices exist yet */}
                   {invoices.length === 0 ? (
                     <EmptyState brandColor={settings.brandColor} icon={Inbox} title="No activity yet" description="Send your first invoice to populate your workspace dashboard." actionText="Create Invoice" onAction={() => setCurrentView('create-invoice')} />
                   ) : (
                     <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
-                      {/* Recent invoices table — shows latest 6 */}
                       <div className="xl:col-span-2 border border-[#E1E1E1] rounded-xl bg-white overflow-hidden">
                         <div className="flex items-center justify-between px-6 py-5 border-b border-[#E1E1E1]">
                           <h3 className="font-bold text-base">Recent invoices</h3>
@@ -1026,7 +939,6 @@ const { workspaceName } = useAuth();
                                 <td className="px-6 font-bold text-sm">
                                   <div className="flex items-center gap-2">
                                     {inv.id}
-                                    {/* Inline escrow badge if this invoice has escrow enabled */}
                                     {inv.escrow && <EscrowBadge />}
                                   </div>
                                 </td>
@@ -1041,9 +953,7 @@ const { workspaceName } = useAuth();
                         </table>
                       </div>
 
-                      {/* Right column: revenue summary card + activity feed */}
                       <div className="xl:col-span-1 flex flex-col gap-6">
-                        {/* Revenue collected vs outstanding progress */}
                         <div className="border border-[#E1E1E1] rounded-xl bg-white p-6 space-y-4">
                           <div className="flex items-center justify-between">
                             <h3 className="font-bold text-base">Revenue</h3>
@@ -1072,7 +982,6 @@ const { workspaceName } = useAuth();
                           })()}
                         </div>
 
-                        {/* Recent activity timeline — status-color coded dots */}
                         <div className="border border-[#E1E1E1] rounded-xl bg-white p-6 space-y-4">
                           <div className="flex items-center justify-between">
                             <h3 className="font-bold text-base">Recent activity</h3>
@@ -1101,16 +1010,11 @@ const { workspaceName } = useAuth();
                 </div>
               )}
 
-              {/* ═══════════════════════════════════════
-                  VIEW: CREATE INVOICE
-                  Left: form — Right: live invoice preview
-                  ═══════════════════════════════════════ */}
+              {/* CREATE INVOICE */}
               {currentView === 'create-invoice' && (
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 items-start text-left pb-20">
-                  <form onSubmit={handleCreateInvoice} className="p-10 border border-[#E1E1E1] rounded-xl bg-white space-y-10">
-                    <h1 className="text-3xl font-bold">New Invoice</h1>
-
-                    {/* Invoice type toggle: One-Time or Recurring */}
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 xl:gap-12 items-start text-left pb-20">
+                  <form onSubmit={handleCreateInvoice} className="p-5 md:p-10 border border-[#E1E1E1] rounded-xl bg-white space-y-6 md:space-y-10">
+                    <h1 className="text-2xl md:text-3xl font-bold">New Invoice</h1>
                     <div className="space-y-2">
                       <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Invoice Type</label>
                       <div className="flex gap-3">
@@ -1126,122 +1030,88 @@ const { workspaceName } = useAuth();
                         ))}
                       </div>
                     </div>
-
-                    {/* Client selector — links to the clients list; allows adding inline */}
-                    <div className="p-8 border-2 border-dashed border-[#E1E1E1] rounded-xl bg-[#FAFAFA] space-y-4">
-                      <div className="flex justify-between items-center">
-                        <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Select Client</label>
-                        <button type="button" onClick={() => setIsClientDrawerOpen(true)} style={{ color: settings.brandColor }} className="text-xs font-bold hover:underline">+ Add New Client</button>
-                      </div>
-                      <select className="w-full h-12 px-4 rounded-lg border border-[#E1E1E1] bg-white outline-none focus:border-[#2563EB] text-sm appearance-none" onChange={(e)=>setInvoiceDraft({...invoiceDraft, client: e.target.value})}>
-                        <option value="">Choose a client...</option>
-                        {clients.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-                      </select>
+                    <div className="p-4 md:p-8 border-2 border-dashed border-[#E1E1E1] rounded-xl bg-[#FAFAFA] space-y-3">
+                      <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Select Client</label>
+                      <select
+  className="w-full h-12 px-4 rounded-lg border border-[#E1E1E1] bg-white outline-none focus:border-[#2563EB] text-sm appearance-none"
+  value={invoiceDraft.client}
+  onChange={(e) => setInvoiceDraft({...invoiceDraft, client: e.target.value})}
+>
+  <option value="">Choose a client...</option>
+  {clients.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+</select>
+                      <button
+                        type="button"
+                        onClick={() => setIsClientDrawerOpen(true)}
+                        style={{ color: settings.brandColor }}
+                        className="text-xs font-bold hover:underline flex items-center gap-1"
+                      >
+                        <Plus size={13} /> Add New Client
+                      </button>
                     </div>
-
-                    {/* Date fields — issue date and due date */}
-                    <div className="grid grid-cols-2 gap-6">
-                      <InputField label="Issuance Date" type="date" value={invoiceDraft.issueDate} onChange={(e)=>setInvoiceDraft({...invoiceDraft, issueDate: e.target.value})} />
-                      <InputField label="Due Date" type="date" onChange={(e)=>setInvoiceDraft({...invoiceDraft, dueDate: e.target.value})} />
+                    <div className="flex flex-col gap-4">
+                      <InputField label="Issuance Date" type="date" value={invoiceDraft.issueDate} onChange={(e) => setInvoiceDraft({...invoiceDraft, issueDate: e.target.value})} />
+                      <InputField label="Due Date" type="date" onChange={(e) => setInvoiceDraft({...invoiceDraft, dueDate: e.target.value})} />
                     </div>
-
-                    {/* Line items table — description, qty, rate, computed amount, delete */}
                     <div className="space-y-4">
                       <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Line Items</label>
-                      <div className="grid grid-cols-12 gap-3 pb-1">
+                      <div className="grid grid-cols-12 gap-2 md:gap-3 pb-1">
                         <div className="col-span-5 text-[10px] font-bold uppercase tracking-widest text-[#6B7280]">Description</div>
                         <div className="col-span-2 text-[10px] font-bold uppercase tracking-widest text-[#6B7280]">Qty</div>
                         <div className="col-span-2 text-[10px] font-bold uppercase tracking-widest text-[#6B7280]">Rate</div>
-                        <div className="col-span-2 text-[10px] font-bold uppercase tracking-widest text-[#6B7280]">Amount</div>
+                        <div className="col-span-2 text-[10px] font-bold uppercase tracking-widest text-[#6B7280]">Amt</div>
                         <div className="col-span-1" />
                       </div>
-
                       {invoiceDraft.items.map(item => (
-                        <div key={item.id} className="grid grid-cols-12 gap-3 items-center">
+                        <div key={item.id} className="grid grid-cols-12 gap-2 md:gap-3 items-center">
                           <div className="col-span-5">
                             <input type="text" placeholder="Item description" value={item.desc}
                               onChange={(e) => { const updatedItems = invoiceDraft.items.map(i => i.id === item.id ? {...i, desc: e.target.value} : i); setInvoiceDraft({...invoiceDraft, items: updatedItems}); }}
-                              className="w-full h-[48px] px-4 rounded-[8px] border border-[#E1E1E1] bg-white outline-none focus:border-[#2563EB] transition-colors text-sm"
+                              className="w-full h-[44px] px-3 rounded-[8px] border border-[#E1E1E1] bg-white outline-none focus:border-[#2563EB] transition-colors text-sm"
                             />
                           </div>
                           <div className="col-span-2">
                             <input type="number" placeholder="Qty" value={item.qty}
                               onChange={(e) => { const updatedItems = invoiceDraft.items.map(i => i.id === item.id ? {...i, qty: Number(e.target.value)} : i); setInvoiceDraft({...invoiceDraft, items: updatedItems}); }}
-                              className="w-full h-[48px] px-4 rounded-[8px] border border-[#E1E1E1] bg-white outline-none focus:border-[#2563EB] transition-colors text-sm"
+                              className="w-full h-[44px] px-2 rounded-[8px] border border-[#E1E1E1] bg-white outline-none focus:border-[#2563EB] transition-colors text-sm"
                             />
                           </div>
                           <div className="col-span-2">
                             <input type="number" placeholder="Rate" value={item.rate}
                               onChange={(e) => { const updatedItems = invoiceDraft.items.map(i => i.id === item.id ? {...i, rate: Number(e.target.value)} : i); setInvoiceDraft({...invoiceDraft, items: updatedItems}); }}
-                              className="w-full h-[48px] px-4 rounded-[8px] border border-[#E1E1E1] bg-white outline-none focus:border-[#2563EB] transition-colors text-sm"
+                              className="w-full h-[44px] px-2 rounded-[8px] border border-[#E1E1E1] bg-white outline-none focus:border-[#2563EB] transition-colors text-sm"
                             />
                           </div>
                           <div className="col-span-2">
-                            {/* Read-only computed amount cell */}
-                            <div className="w-full h-[48px] px-4 rounded-[8px] border border-[#E1E1E1] bg-[#FAFAFA] flex items-center text-sm font-bold text-[#010101]">
+                            <div className="w-full h-[44px] px-2 rounded-[8px] border border-[#E1E1E1] bg-[#FAFAFA] flex items-center text-xs font-bold text-[#010101] overflow-hidden">
                               {currencySymbol}{(item.qty * item.rate).toLocaleString()}
                             </div>
                           </div>
                           <div className="col-span-1 flex justify-center">
-                            <button type="button" onClick={()=>setInvoiceDraft({...invoiceDraft, items: invoiceDraft.items.filter(i=>i.id !== item.id)})} className="text-red-400 hover:text-red-600 transition-colors"><Trash2 size={16}/></button>
+                            <button type="button" onClick={() => setInvoiceDraft({...invoiceDraft, items: invoiceDraft.items.filter(i => i.id !== item.id)})} className="text-red-400 hover:text-red-600 transition-colors"><Trash2 size={14}/></button>
                           </div>
                         </div>
                       ))}
-
-                      {/* Add another line item row */}
                       <button type="button" onClick={addLineItem} style={{ color: settings.brandColor }} className="text-xs font-bold flex items-center gap-2 pt-2"><PlusCircle size={16}/> Add another line item</button>
                     </div>
-
-                    {/* Discount & Tax percentage inputs */}
-                    <div className="grid grid-cols-2 gap-6 pt-4 border-t border-[#FAFAFA]">
-                      <InputField label="Discount ($)" type="number" onChange={(e)=>setInvoiceDraft({...invoiceDraft, discount: Number(e.target.value)})} />
-                      <InputField label="Tax (VAT %)" type="number" onChange={(e)=>setInvoiceDraft({...invoiceDraft, tax: Number(e.target.value)})} />
+                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#FAFAFA]">
+                      <InputField label="Discount ($)" type="number" onChange={(e) => setInvoiceDraft({...invoiceDraft, discount: Number(e.target.value)})} />
+                      <InputField label="Tax (VAT %)" type="number" onChange={(e) => setInvoiceDraft({...invoiceDraft, tax: Number(e.target.value)})} />
                     </div>
-
-                    {/* Notes or summary textarea */}
                     <div className="space-y-2">
                       <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Summary / Notes</label>
-                      <textarea className="w-full h-24 p-4 border border-[#E1E1E1] rounded-lg outline-none focus:border-[#2563EB] text-sm resize-none" placeholder="Add any extra notes..." onChange={(e)=>setInvoiceDraft({...invoiceDraft, notes: e.target.value})} />
+                      <textarea className="w-full h-24 p-4 border border-[#E1E1E1] rounded-lg outline-none focus:border-[#2563EB] text-sm resize-none" placeholder="Add any extra notes..." value={invoiceDraft.notes} onChange={(e) => setInvoiceDraft({...invoiceDraft, notes: e.target.value})} />
                     </div>
-
-                    {/* ── DANPAY ESCROW TOGGLE ──
-                        Enabling this generates a unique virtual receiving account when the invoice is finalized.
-                        Funds are held in escrow until manually released by the user. */}
-                    <div className="p-6 border border-[#E1E1E1] rounded-xl bg-[#FAFAFA] space-y-3">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-purple-50 border border-purple-100 flex items-center justify-center flex-shrink-0">
-                            <Landmark size={18} className="text-purple-600" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-bold text-[#010101]">Enable DanPay Escrow</p>
-                            <p className="text-xs text-[#6B7280] mt-0.5">Generate a unique receiving account for this invoice. Funds are held in escrow until you release them.</p>
-                          </div>
-                        </div>
-                        {/* Toggle switch — purple when enabled */}
-                        <button
-                          type="button"
-                          onClick={() => setInvoiceDraft({...invoiceDraft, escrowEnabled: !invoiceDraft.escrowEnabled})}
-                          className={`flex-shrink-0 w-12 h-6 rounded-full border-2 transition-all relative ${invoiceDraft.escrowEnabled ? 'border-purple-500 bg-purple-500' : 'border-[#E1E1E1] bg-[#E1E1E1]'}`}
-                        >
-                          <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${invoiceDraft.escrowEnabled ? 'left-[22px]' : 'left-0.5'}`} />
-                        </button>
-                      </div>
-                      {/* Confirmation note shown after enabling escrow */}
-                      {invoiceDraft.escrowEnabled && (
-                        <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-2 text-xs text-purple-700 bg-purple-50 border border-purple-100 rounded-lg p-3">
-                          <CheckCircle2 size={14} className="text-purple-500 flex-shrink-0" />
-                          A unique bank receiving account will be generated when you finalize this invoice.
-                        </motion.div>
-                      )}
+             <div className="flex items-center gap-3 p-4 bg-purple-50 border border-purple-100 rounded-xl">
+                    <Landmark size={16} className="text-purple-600 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-bold text-purple-700">Virtual One-Time Account Included</p>
+                      <p className="text-xs text-[#6B7280] mt-0.5">Every invoice automatically gets a unique virtual account for secure payment collection.</p>
                     </div>
-
-                    {/* Form submit CTA */}
-                    <button type="submit" style={{ backgroundColor: settings.brandColor }} className="w-full text-white h-[56px] rounded-lg font-bold text-lg hover:opacity-90 transition-all">Finalize & Send Invoice</button>
+                  </div>
+                    <button type="submit" style={{ backgroundColor: settings.brandColor }} className="w-full text-white h-[52px] md:h-[56px] rounded-lg font-bold text-base md:text-lg hover:opacity-90 transition-all">Finalize & Send Invoice</button>
                   </form>
-
-                  {/* INVOICE PREVIEW — live preview card, sticky on desktop */}
-                  <div className="sticky top-28 bg-white border border-[#E1E1E1] rounded-xl p-10 min-h-[700px] flex flex-col justify-between">
+                  <div className="hidden xl:flex sticky top-28 bg-white border border-[#E1E1E1] rounded-xl p-10 min-h-[700px] flex-col justify-between">
                     <div className="space-y-12">
                       <div className="flex justify-between items-start">
                         <div className="w-12 h-12 rounded-lg" style={{ backgroundColor: settings.brandColor }} />
@@ -1253,7 +1123,6 @@ const { workspaceName } = useAuth();
                       <div>
                         <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-widest mb-2">Billed To</p>
                         <p className="text-xl font-bold">{invoiceDraft.client || 'Client Name'}</p>
-                        {/* Display selected client's email beneath their name in the preview */}
                         {invoiceDraft.client && clients.find(c => c.name === invoiceDraft.client)?.email && (
                           <p className="text-sm text-[#6B7280] mt-0.5 flex items-center gap-1.5">
                             <Mail size={12} />
@@ -1261,7 +1130,6 @@ const { workspaceName } = useAuth();
                           </p>
                         )}
                       </div>
-                      {/* Line items preview table */}
                       <div className="space-y-4">
                         <div className="grid grid-cols-4 text-[9px] font-bold text-[#6B7280] uppercase border-b border-[#E1E1E1] pb-2 text-left"><div>Item</div><div className="text-right">Qty</div><div className="text-right">Rate</div><div className="text-right">Total</div></div>
                         {invoiceDraft.items.map(i => (
@@ -1274,8 +1142,26 @@ const { workspaceName } = useAuth();
                         ))}
                       </div>
                     </div>
-                    <div className="text-right pt-10 border-t border-[#E1E1E1]">
-                      {/* Escrow badge on preview card when toggle is on */}
+                    <div className="pt-10 border-t border-[#E1E1E1]">
+                    {(
+                      <div className="mb-6 p-4 bg-purple-50 border border-purple-100 rounded-lg space-y-2">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Landmark size={13} className="text-purple-600" />
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-purple-600">Virtual One-Time Account</p>
+                        </div>
+                        {[
+                          { label: 'Bank', value: 'DanPay Virtual Bank' },
+                          { label: 'Account No.', value: '•••• (generated on submit)' },
+                          { label: 'Reference', value: `VTA-INV-Draft` },
+                        ].map(f => (
+                          <div key={f.label} className="flex justify-between items-center">
+                            <span className="text-[9px] font-bold uppercase tracking-widest text-purple-400">{f.label}</span>
+                            <span className="text-[10px] font-bold text-purple-700">{f.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="text-right">
                       {invoiceDraft.escrowEnabled && (
                         <div className="flex justify-end mb-3">
                           <EscrowBadge />
@@ -1285,28 +1171,20 @@ const { workspaceName } = useAuth();
                       <p className="text-4xl font-bold">{currencySymbol}{grandTotal.toLocaleString()}</p>
                     </div>
                   </div>
+                  </div>
                 </div>
               )}
 
-              {/* ═══════════════════════════════════════
-                  VIEW: INVOICES LIST
-                  On desktop: standalone invoices list with filters.
-                  On mobile: tab-switched view showing Invoices OR Receipts
-                  (receipts are merged here on mobile since they're excluded from the mobile nav)
-                  ═══════════════════════════════════════ */}
+              {/* INVOICES LIST */}
               {currentView === 'invoices' && (
                 <div className="space-y-6 text-left">
                   <div className="flex justify-between items-center">
                     <h1 className="text-3xl font-bold">Invoices</h1>
                     <div className="flex items-center gap-3">
-                      {/* CSV export button — desktop only */}
                       <button onClick={() => { const csv = ['ID,Client,Amount,Status,Type,Date,Escrow', ...invoices.map(i=>`${i.id},${i.client},${i.amount},${i.status},${i.type||''},${i.date},${i.escrow ? 'Yes' : 'No'}`)].join('\n'); const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download='invoices.csv'; a.click(); }} className="hidden md:flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#E1E1E1] text-sm font-bold text-[#6B7280] hover:bg-[#FAFAFA] transition-colors"><Download size={16}/> Export</button>
                       <button onClick={() => setCurrentView('create-invoice')} style={{ backgroundColor: settings.brandColor }} className="hidden md:flex text-white px-6 py-3 rounded-lg font-bold items-center gap-2"><Plus size={20} /> New Invoice</button>
                     </div>
                   </div>
-
-                  {/* MOBILE-ONLY: Tab switcher to toggle between Invoices and Receipts
-                      Receipts are not in the mobile nav so they live here as a sub-tab */}
                   <div className="flex md:hidden gap-1 p-1 bg-[#FAFAFA] border border-[#E1E1E1] rounded-lg w-fit">
                     {[
                       { id: 'invoices', label: 'Invoices', icon: FileText },
@@ -1325,8 +1203,6 @@ const { workspaceName } = useAuth();
                       </button>
                     ))}
                   </div>
-
-                  {/* ── MOBILE: RECEIPTS SUB-TAB ── */}
                   {invoiceMobileTab === 'receipts' && (
                     <div className="md:hidden space-y-6">
                       {paidInvoices.length > 0 && (
@@ -1368,11 +1244,8 @@ const { workspaceName } = useAuth();
                       )}
                     </div>
                   )}
-
-                  {/* ── INVOICES SUB-TAB (default) — shown on mobile and always on desktop ── */}
                   {(invoiceMobileTab === 'invoices') && (
                     <div className="space-y-4">
-                      {/* Status filter bar */}
                       <FilterBar
                         searchValue={invoiceSearch}
                         onSearchChange={setInvoiceSearch}
@@ -1388,8 +1261,6 @@ const { workspaceName } = useAuth();
                         onFilterChange={setInvoiceStatusFilter}
                         brandColor={settings.brandColor}
                       />
-
-                      {/* Type sub-filter: All / One-Time / Recurring */}
                       <div className="flex gap-2">
                         {[{ value: 'all', label: 'All Types' }, { value: 'one-time', label: 'One-Time' }, { value: 'recurring', label: 'Recurring' }].map(f => (
                           <button
@@ -1405,7 +1276,6 @@ const { workspaceName } = useAuth();
                           </button>
                         ))}
                       </div>
-
                       {invoices.length > 0 ? (
                         filteredInvoices.length > 0 ? (
                           <div className="border border-[#E1E1E1] rounded-xl overflow-hidden bg-white">
@@ -1415,7 +1285,25 @@ const { workspaceName } = useAuth();
                               </thead>
                               <tbody className="divide-y divide-[#E1E1E1]">
                                 {filteredInvoices.map(inv => (
-                                  <tr key={inv.id} onClick={() => setSelectedInvoice(inv)} className="h-16 cursor-pointer hover:bg-[#FAFAFA] transition-colors">
+                                  <tr key={inv.id} onClick={() => {
+  if (inv.status === 'Draft') {
+    setInvoiceDraft({
+      client: inv.client,
+      issueDate: inv.date,
+      dueDate: inv.dueDate || '',
+      items: inv.items,
+      discount: inv.discount,
+      tax: inv.tax,
+      notes: inv.notes || '',
+      type: inv.type,
+      escrowEnabled: true,
+    });
+    setInvoices(invoices.filter(i => i.id !== inv.id));
+    setCurrentView('create-invoice');
+  } else {
+    setSelectedInvoice(inv);
+  }
+}} className="h-16 cursor-pointer hover:bg-[#FAFAFA] transition-colors">
                                     <td className="px-6 font-bold text-sm">
                                       <div className="flex items-center gap-2">
                                         {inv.id}
@@ -1443,10 +1331,7 @@ const { workspaceName } = useAuth();
                 </div>
               )}
 
-              {/* ═══════════════════════════════════════
-                  VIEW: RECEIPTS — Desktop only (mobile uses sub-tab in Invoices view)
-                  Shows paid invoices; searchable and exportable as CSV
-                  ═══════════════════════════════════════ */}
+              {/* RECEIPTS */}
               {currentView === 'receipts' && (
                 <div className="space-y-6 text-left">
                   <div className="flex justify-between items-center">
@@ -1455,7 +1340,6 @@ const { workspaceName } = useAuth();
                       <button onClick={() => { const csv = ['Receipt,Client,Amount,Date', ...paidInvoices.map(i=>`RCT-${i.id},${i.client},${i.amount},${i.date}`)].join('\n'); const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download='receipts.csv'; a.click(); }} className="hidden md:flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#E1E1E1] text-sm font-bold text-[#6B7280] hover:bg-[#FAFAFA] transition-colors"><Download size={16}/> Export</button>
                     )}
                   </div>
-
                   {paidInvoices.length > 0 && (
                     <FilterBar
                       searchValue={receiptSearch}
@@ -1467,7 +1351,6 @@ const { workspaceName } = useAuth();
                       brandColor={settings.brandColor}
                     />
                   )}
-
                   {paidInvoices.length > 0 ? (
                     filteredReceipts.length > 0 ? (
                       <div className="border border-[#E1E1E1] rounded-xl overflow-hidden bg-white">
@@ -1497,17 +1380,13 @@ const { workspaceName } = useAuth();
                 </div>
               )}
 
-              {/* ═══════════════════════════════════════
-                  VIEW: CLIENTS
-                  Grid of client cards; searchable; click to open edit drawer
-                  ═══════════════════════════════════════ */}
+              {/* CLIENTS */}
               {currentView === 'clients' && (
                 <div className="space-y-6 text-left">
                   <div className="flex justify-between items-center">
                     <h1 className="text-3xl font-bold text-left">Clients</h1>
                     <button onClick={() => setIsClientDrawerOpen(true)} style={{ backgroundColor: settings.brandColor }} className="hidden md:flex text-white px-6 py-3 rounded-lg font-bold items-center gap-2"><Plus size={20} /> Add Client</button>
                   </div>
-
                   {clients.length > 0 && (
                     <FilterBar
                       searchValue={clientSearch}
@@ -1519,7 +1398,6 @@ const { workspaceName } = useAuth();
                       brandColor={settings.brandColor}
                     />
                   )}
-
                   {clients.length > 0 ? (
                     filteredClients.length > 0 ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1530,7 +1408,6 @@ const { workspaceName } = useAuth();
                               <p className="text-sm text-[#6B7280]">{client.email}</p>
                               {client.location && <p className="text-xs text-[#6B7280] mt-1">{client.location}</p>}
                             </div>
-                            {/* Delete button — revealed on hover */}
                             <button onClick={(e)=>{e.stopPropagation(); setClients(clients.filter(c=>c.id !== client.id));}} className="opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 size={18} className="text-red-300 hover:text-red-500" /></button>
                           </div>
                         ))}
@@ -1545,35 +1422,25 @@ const { workspaceName } = useAuth();
                 </div>
               )}
 
-              {/* ═══════════════════════════════════════
-                  VIEW: WALLET
-                  Shows balance, transaction history, and sub-tabs for:
-                  Overview | Withdraw | Add Card | Pay
-                  ═══════════════════════════════════════ */}
+              {/* WALLET */}
               {currentView === 'wallet' && (
-                <div className="space-y-6 text-left">
-                  <h1 className="text-3xl font-bold">Wallet</h1>
-
-                  {/* Success feedback toast — shown briefly after wallet actions */}
+                <div className="space-y-5 text-left">
+                  <h1 className="text-2xl md:text-3xl font-bold">Wallet</h1>
                   {walletActionFeedback && (
                     <motion.div
                       initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                      className="flex items-center gap-3 px-5 py-4 bg-green-50 border border-green-100 rounded-xl"
+                      className="flex items-center gap-3 px-4 py-3 bg-green-50 border border-green-100 rounded-xl"
                     >
                       <CheckCircle2 size={16} className="text-green-600 flex-shrink-0" />
                       <p className="text-sm font-bold text-green-700">{walletActionFeedback}</p>
                     </motion.div>
                   )}
-
-                  {/* Balance card — shows current wallet balance prominently */}
-                  <div className="p-8 rounded-xl border border-[#E1E1E1] bg-white">
+                  <div className="p-6 md:p-8 rounded-xl border border-[#E1E1E1] bg-white">
                     <p className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280] mb-2">Available Balance</p>
-                    <p className="text-4xl font-bold">{currencySymbol}{walletBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    <p className="text-3xl md:text-4xl font-bold">{currencySymbol}{walletBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                     <p className="text-xs text-[#6B7280] mt-2">Includes escrow releases and available funds</p>
                   </div>
-
-                  {/* Wallet action sub-tabs: Overview | Withdraw | Add Card | Pay */}
-                  <div className="flex gap-1 p-1 bg-[#FAFAFA] border border-[#E1E1E1] rounded-lg w-fit overflow-x-auto">
+                  <div className="flex gap-1 p-1 bg-[#FAFAFA] border border-[#E1E1E1] rounded-lg w-full overflow-x-auto">
                     {[
                       { id: 'overview', label: 'Overview' },
                       { id: 'withdraw', label: 'Withdraw' },
@@ -1583,7 +1450,7 @@ const { workspaceName } = useAuth();
                       <button
                         key={tab.id}
                         onClick={() => setWalletTab(tab.id)}
-                        className="px-5 py-2 rounded-md text-xs font-bold whitespace-nowrap transition-all"
+                        className="flex-1 px-3 py-2 rounded-md text-xs font-bold whitespace-nowrap transition-all min-w-[70px]"
                         style={walletTab === tab.id
                           ? { backgroundColor: settings.brandColor, color: '#fff' }
                           : { color: '#6B7280' }
@@ -1593,18 +1460,14 @@ const { workspaceName } = useAuth();
                       </button>
                     ))}
                   </div>
-
-                  {/* ── WALLET: OVERVIEW TAB ──
-                      Shows transaction history and saved cards */}
                   {walletTab === 'overview' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Transaction history list */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="border border-[#E1E1E1] rounded-xl bg-white overflow-hidden">
-                        <div className="px-6 py-5 border-b border-[#E1E1E1]">
+                        <div className="px-5 py-4 border-b border-[#E1E1E1]">
                           <h3 className="font-bold text-base">Transactions</h3>
                         </div>
                         {walletTransactions.length === 0 ? (
-                          <div className="py-16 flex flex-col items-center justify-center text-center px-6">
+                          <div className="py-12 flex flex-col items-center justify-center text-center px-6">
                             <Wallet size={28} className="text-[#E1E1E1] mb-3" />
                             <p className="text-sm font-bold text-[#010101]">No transactions yet</p>
                             <p className="text-xs text-[#6B7280] mt-1">Transactions appear after escrow releases, withdrawals, or payments.</p>
@@ -1612,21 +1475,20 @@ const { workspaceName } = useAuth();
                         ) : (
                           <div className="divide-y divide-[#E1E1E1]">
                             {walletTransactions.map(tx => (
-                              <div key={tx.id} className="flex items-center justify-between px-6 py-4">
+                              <div key={tx.id} className="flex items-center justify-between px-5 py-4">
                                 <div className="flex items-center gap-3">
-                                  {/* Icon changes based on transaction direction */}
-                                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${tx.amount > 0 ? 'bg-green-50' : 'bg-red-50'}`}>
+                                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${tx.amount > 0 ? 'bg-green-50' : 'bg-red-50'}`}>
                                     {tx.amount > 0
                                       ? <ArrowDownLeft size={14} className="text-green-600" />
                                       : <ArrowUpRight size={14} className="text-red-500" />
                                     }
                                   </div>
-                                  <div>
-                                    <p className="text-sm font-bold text-[#010101]">{tx.label}</p>
+                                  <div className="min-w-0">
+                                    <p className="text-sm font-bold text-[#010101] truncate">{tx.label}</p>
                                     <p className="text-[10px] text-[#6B7280]">{tx.date}</p>
                                   </div>
                                 </div>
-                                <span className={`text-sm font-bold ${tx.amount > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                                <span className={`text-sm font-bold flex-shrink-0 ml-2 ${tx.amount > 0 ? 'text-green-600' : 'text-red-500'}`}>
                                   {tx.amount > 0 ? '+' : ''}{currencySymbol}{Math.abs(tx.amount).toLocaleString()}
                                 </span>
                               </div>
@@ -1634,10 +1496,8 @@ const { workspaceName } = useAuth();
                           </div>
                         )}
                       </div>
-
-                      {/* Saved cards list */}
                       <div className="border border-[#E1E1E1] rounded-xl bg-white overflow-hidden">
-                        <div className="flex items-center justify-between px-6 py-5 border-b border-[#E1E1E1]">
+                        <div className="flex items-center justify-between px-5 py-4 border-b border-[#E1E1E1]">
                           <h3 className="font-bold text-base">Saved Cards</h3>
                           <button
                             onClick={() => setWalletTab('add-card')}
@@ -1648,7 +1508,7 @@ const { workspaceName } = useAuth();
                           </button>
                         </div>
                         {walletCards.length === 0 ? (
-                          <div className="py-16 flex flex-col items-center justify-center text-center px-6">
+                          <div className="py-12 flex flex-col items-center justify-center text-center px-6">
                             <CreditCard size={28} className="text-[#E1E1E1] mb-3" />
                             <p className="text-sm font-bold text-[#010101]">No cards saved</p>
                             <p className="text-xs text-[#6B7280] mt-1">Add a card to fund your wallet or make payments.</p>
@@ -1656,9 +1516,9 @@ const { workspaceName } = useAuth();
                         ) : (
                           <div className="divide-y divide-[#E1E1E1]">
                             {walletCards.map(card => (
-                              <div key={card.id} className="flex items-center justify-between px-6 py-4">
+                              <div key={card.id} className="flex items-center justify-between px-5 py-4">
                                 <div className="flex items-center gap-3">
-                                  <div className="w-10 h-7 bg-[#010101] rounded flex items-center justify-center">
+                                  <div className="w-10 h-7 bg-[#010101] rounded flex items-center justify-center flex-shrink-0">
                                     <CreditCard size={14} className="text-white" />
                                   </div>
                                   <div>
@@ -1666,7 +1526,6 @@ const { workspaceName } = useAuth();
                                     <p className="text-[10px] text-[#6B7280]">Expires {card.expiry}</p>
                                   </div>
                                 </div>
-                                {/* Remove card button */}
                                 <button onClick={() => setWalletCards(walletCards.filter(c => c.id !== card.id))} className="text-red-300 hover:text-red-500 transition-colors">
                                   <Trash2 size={15} />
                                 </button>
@@ -1677,21 +1536,14 @@ const { workspaceName } = useAuth();
                       </div>
                     </div>
                   )}
-
-                  {/* ── WALLET: WITHDRAW TAB ──
-                      Allows user to withdraw funds to their linked bank account */}
                   {walletTab === 'withdraw' && (
-                    <div className="max-w-md space-y-6">
-                      <div className="p-6 border border-[#E1E1E1] rounded-xl bg-white space-y-6">
+                    <div className="w-full max-w-md space-y-5">
+                      <div className="p-5 md:p-6 border border-[#E1E1E1] rounded-xl bg-white space-y-5">
                         <h3 className="font-bold text-base">Withdraw to Bank</h3>
-
-                        {/* Available balance reminder */}
                         <div className="p-4 bg-[#FAFAFA] border border-[#E1E1E1] rounded-lg flex justify-between items-center">
                           <span className="text-xs font-bold text-[#6B7280] uppercase tracking-widest">Available</span>
                           <span className="font-bold">{currencySymbol}{walletBalance.toLocaleString()}</span>
                         </div>
-
-                        {/* Withdrawal amount input */}
                         <div className="space-y-2">
                           <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Amount</label>
                           <input
@@ -1701,13 +1553,10 @@ const { workspaceName } = useAuth();
                             onChange={e => setWalletWithdrawDraft({ ...walletWithdrawDraft, amount: e.target.value })}
                             className="w-full h-[48px] px-4 rounded-[8px] border border-[#E1E1E1] bg-white outline-none focus:border-[#2563EB] transition-colors text-sm"
                           />
-                          {/* Validation: warn if amount exceeds balance */}
                           {Number(walletWithdrawDraft.amount) > walletBalance && (
                             <p className="text-xs text-red-500 font-bold">Amount exceeds available balance.</p>
                           )}
                         </div>
-
-                        {/* Method selector — bank or card */}
                         <div className="space-y-2">
                           <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Withdraw to</label>
                           <div className="flex gap-3">
@@ -1726,8 +1575,6 @@ const { workspaceName } = useAuth();
                             ))}
                           </div>
                         </div>
-
-                        {/* Payout settings reminder — link to configure bank if not set */}
                         {!payoutSettings.verified && (
                           <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-100 rounded-lg">
                             <AlertTriangle size={14} className="text-amber-500 flex-shrink-0 mt-0.5" />
@@ -1737,7 +1584,6 @@ const { workspaceName } = useAuth();
                             </p>
                           </div>
                         )}
-
                         <button
                           onClick={handleWithdraw}
                           disabled={!walletWithdrawDraft.amount || Number(walletWithdrawDraft.amount) > walletBalance || Number(walletWithdrawDraft.amount) <= 0}
@@ -1749,16 +1595,11 @@ const { workspaceName } = useAuth();
                       </div>
                     </div>
                   )}
-
-                  {/* ── WALLET: ADD CARD TAB ──
-                      Form to save a new payment card */}
                   {walletTab === 'add-card' && (
-                    <div className="max-w-md space-y-6">
-                      <div className="p-6 border border-[#E1E1E1] rounded-xl bg-white space-y-6">
+                    <div className="w-full max-w-md space-y-5">
+                      <div className="p-5 md:p-6 border border-[#E1E1E1] rounded-xl bg-white space-y-5">
                         <h3 className="font-bold text-base">Add Payment Card</h3>
-
-                        {/* Card preview chip */}
-                        <div className="h-[120px] rounded-xl bg-[#010101] p-5 flex flex-col justify-between">
+                        <div className="h-[110px] rounded-xl bg-[#010101] p-5 flex flex-col justify-between">
                           <div className="flex justify-between items-center">
                             <p className="text-white text-xs font-bold opacity-60 uppercase tracking-widest">DanPay Wallet</p>
                             <CreditCard size={18} className="text-white opacity-60" />
@@ -1770,8 +1611,6 @@ const { workspaceName } = useAuth();
                             }
                           </p>
                         </div>
-
-                        {/* Card number input */}
                         <div className="space-y-2">
                           <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Card Number</label>
                           <input
@@ -1780,7 +1619,6 @@ const { workspaceName } = useAuth();
                             maxLength={19}
                             value={walletCardDraft.number}
                             onChange={e => {
-                              // Auto-format with spaces every 4 digits
                               const raw = e.target.value.replace(/\D/g,'').slice(0,16);
                               const formatted = raw.match(/.{1,4}/g)?.join(' ') || raw;
                               setWalletCardDraft({ ...walletCardDraft, number: formatted });
@@ -1788,16 +1626,7 @@ const { workspaceName } = useAuth();
                             className="w-full h-[48px] px-4 rounded-[8px] border border-[#E1E1E1] bg-white outline-none focus:border-[#2563EB] transition-colors text-sm font-mono"
                           />
                         </div>
-
-                        {/* Cardholder name */}
-                        <InputField
-                          label="Cardholder Name"
-                          placeholder="Jane Doe"
-                          value={walletCardDraft.name}
-                          onChange={e => setWalletCardDraft({ ...walletCardDraft, name: e.target.value })}
-                        />
-
-                        {/* Expiry and CVV on the same row */}
+                        <InputField label="Cardholder Name" placeholder="Jane Doe" value={walletCardDraft.name} onChange={e => setWalletCardDraft({ ...walletCardDraft, name: e.target.value })} />
                         <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Expiry</label>
@@ -1807,7 +1636,6 @@ const { workspaceName } = useAuth();
                               maxLength={5}
                               value={walletCardDraft.expiry}
                               onChange={e => {
-                                // Auto-insert slash after 2 digits
                                 let v = e.target.value.replace(/\D/g,'').slice(0,4);
                                 if (v.length > 2) v = v.slice(0,2) + '/' + v.slice(2);
                                 setWalletCardDraft({ ...walletCardDraft, expiry: v });
@@ -1827,8 +1655,6 @@ const { workspaceName } = useAuth();
                             />
                           </div>
                         </div>
-
-                        {/* Save card CTA */}
                         <button
                           onClick={handleAddCard}
                           disabled={!walletCardDraft.number || !walletCardDraft.name || !walletCardDraft.expiry}
@@ -1840,29 +1666,15 @@ const { workspaceName } = useAuth();
                       </div>
                     </div>
                   )}
-
-                  {/* ── WALLET: PAY TAB ──
-                      Send money directly to a named recipient from wallet balance */}
                   {walletTab === 'pay' && (
-                    <div className="max-w-md space-y-6">
-                      <div className="p-6 border border-[#E1E1E1] rounded-xl bg-white space-y-6">
+                    <div className="w-full max-w-md space-y-5">
+                      <div className="p-5 md:p-6 border border-[#E1E1E1] rounded-xl bg-white space-y-5">
                         <h3 className="font-bold text-base">Send Payment</h3>
-
-                        {/* Balance reminder at the top */}
                         <div className="p-4 bg-[#FAFAFA] border border-[#E1E1E1] rounded-lg flex justify-between items-center">
                           <span className="text-xs font-bold text-[#6B7280] uppercase tracking-widest">Balance</span>
                           <span className="font-bold">{currencySymbol}{walletBalance.toLocaleString()}</span>
                         </div>
-
-                        {/* Recipient name or email */}
-                        <InputField
-                          label="Recipient"
-                          placeholder="Name or email address"
-                          value={walletPayDraft.recipient}
-                          onChange={e => setWalletPayDraft({ ...walletPayDraft, recipient: e.target.value })}
-                        />
-
-                        {/* Payment amount */}
+                        <InputField label="Recipient" placeholder="Name or email address" value={walletPayDraft.recipient} onChange={e => setWalletPayDraft({ ...walletPayDraft, recipient: e.target.value })} />
                         <div className="space-y-2">
                           <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Amount</label>
                           <input
@@ -1876,8 +1688,6 @@ const { workspaceName } = useAuth();
                             <p className="text-xs text-red-500 font-bold">Amount exceeds available balance.</p>
                           )}
                         </div>
-
-                        {/* Optional payment note */}
                         <div className="space-y-2">
                           <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Note (optional)</label>
                           <input
@@ -1888,7 +1698,6 @@ const { workspaceName } = useAuth();
                             className="w-full h-[48px] px-4 rounded-[8px] border border-[#E1E1E1] bg-white outline-none focus:border-[#2563EB] transition-colors text-sm"
                           />
                         </div>
-
                         <button
                           onClick={handleWalletPay}
                           disabled={!walletPayDraft.recipient || !walletPayDraft.amount || Number(walletPayDraft.amount) > walletBalance || Number(walletPayDraft.amount) <= 0}
@@ -1903,7 +1712,7 @@ const { workspaceName } = useAuth();
                 </div>
               )}
 
-              {/* Analytics placeholder — desktop only (not in mobile nav) */}
+              {/* ANALYTICS */}
               {currentView === 'analytics' && (
                 <div className="space-y-6 text-left">
                   <h1 className="text-3xl font-bold text-left">Analytics</h1>
@@ -1911,16 +1720,12 @@ const { workspaceName } = useAuth();
                 </div>
               )}
 
-              {/* ═══════════════════════════════════════
-                  VIEW: SETTINGS
-                  Tabs: General | Security | Notifications | Members | Payout
-                  ═══════════════════════════════════════ */}
+              {/* SETTINGS — UPDATED FOR MOBILE RESPONSIVENESS */}
               {currentView === 'settings' && (
-                <div className="max-w-4xl mx-auto space-y-10 text-left pb-20">
-                  <h1 className="text-3xl font-bold">Settings</h1>
+                <div className="w-full max-w-4xl mx-auto space-y-6 text-left pb-24 px-1 md:px-0">
+                  <h1 className="text-2xl md:text-3xl font-bold">Settings</h1>
 
-                  {/* Settings tab navigation bar */}
-                  <div className="flex border-b border-[#E1E1E1] gap-8 overflow-x-auto">
+                  <div className="flex border-b border-[#E1E1E1] overflow-x-auto -mx-4 md:mx-0 px-4 md:px-0 no-scrollbar">
                     {[
                       { id: 'general', label: 'General', icon: Palette },
                       { id: 'security', label: 'Security', icon: Shield },
@@ -1928,73 +1733,68 @@ const { workspaceName } = useAuth();
                       { id: 'members', label: 'Members', icon: Users2 },
                       { id: 'payout', label: 'Payout', icon: Wallet },
                     ].map(tab => (
-                      <button key={tab.id} onClick={() => setActiveSettingsTab(tab.id)}
-                        className={`pb-4 text-xs font-bold uppercase tracking-widest border-b-2 transition-all whitespace-nowrap flex items-center gap-1.5 ${activeSettingsTab === tab.id ? 'border-[#2563EB] text-[#2563EB]' : 'border-transparent text-[#6B7280]'}`}>
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveSettingsTab(tab.id)}
+                        className={`pb-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-all whitespace-nowrap flex items-center gap-1.5 mr-6 flex-shrink-0 ${activeSettingsTab === tab.id ? 'border-[#2563EB] text-[#2563EB]' : 'border-transparent text-[#6B7280]'}`}
+                      >
                         {tab.label}
                       </button>
                     ))}
                   </div>
 
-                  {/* ── GENERAL TAB: Business name, logo upload, brand color, currency, location ── */}
                   {activeSettingsTab === 'general' && (
-                    <div className="space-y-8">
-                      <div className="p-8 border border-[#E1E1E1] rounded-xl bg-white space-y-10">
-                        <section className="space-y-6">
+                    <div className="space-y-6">
+                      <div className="p-5 md:p-8 border border-[#E1E1E1] rounded-xl bg-white space-y-8">
+                        <section className="space-y-5">
                           <h3 className="font-bold text-sm text-[#6B7280] uppercase tracking-widest">Brand Identity</h3>
-                          <div className="flex items-center gap-6">
-                            {/* Logo upload placeholder */}
-                            <div className="w-24 h-24 border-2 border-dashed border-[#E1E1E1] rounded-xl bg-[#FAFAFA] flex flex-col items-center justify-center text-[#6B7280] cursor-pointer hover:bg-white transition-colors">
-                              <Upload size={20}/><span className="text-[9px] font-bold mt-1 uppercase tracking-widest">Logo</span>
+                          <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+                            <div className="w-24 h-24 border-2 border-dashed border-[#E1E1E1] rounded-xl bg-[#FAFAFA] flex flex-col items-center justify-center text-[#6B7280] cursor-pointer hover:bg-white transition-colors flex-shrink-0">
+                              <Upload size={24}/><span className="text-[9px] font-bold mt-2 uppercase tracking-widest">Logo</span>
                             </div>
-                            <div className="flex-1 space-y-4">
-                              <InputField label="Workspace Name" value={settings.businessName} onChange={(e)=>setSettings({...settings, businessName: e.target.value})} />
-                              {/* Brand color swatches — clicking a swatch updates the accent color globally */}
-                              <div className="space-y-2">
+                            <div className="flex-1 w-full space-y-5">
+                              <InputField label="Workspace Name" value={settings.businessName} onChange={(e) => setSettings({...settings, businessName: e.target.value})} />
+                              <div className="space-y-3">
                                 <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Brand Accent Color</label>
-                                <div className="flex gap-2">
+                                <div className="flex gap-3 flex-wrap">
                                   {['#2563EB', '#010101', '#7C3AED', '#DB2777', '#10B981'].map(c => (
-                                    <button key={c} onClick={()=>setSettings({...settings, brandColor: c})} className={`w-8 h-8 rounded-full border-2 ${settings.brandColor === c ? 'border-blue-300' : 'border-transparent'}`} style={{ backgroundColor: c }} />
+                                    <button key={c} onClick={() => setSettings({...settings, brandColor: c})} className={`w-10 h-10 rounded-full border-2 transition-transform active:scale-90 ${settings.brandColor === c ? 'border-blue-400 scale-110 shadow-sm' : 'border-transparent opacity-80'}`} style={{ backgroundColor: c }} />
                                   ))}
                                 </div>
                               </div>
                             </div>
                           </div>
                         </section>
-                        <div className="grid grid-cols-2 gap-6 pt-6 border-t border-[#FAFAFA]">
-                          <InputField label="Currency" type="select" value={settings.currency} onChange={(e)=>setSettings({...settings, currency: e.target.value})} options={[{label:'USD', value:'USD'},{label:'EUR', value:'EUR'}]} />
-                          <InputField label="Location" value={settings.location} onChange={(e)=>setSettings({...settings, location: e.target.value})} />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-6 border-t border-[#FAFAFA]">
+                          <InputField label="Currency" type="select" value={settings.currency} onChange={(e) => setSettings({...settings, currency: e.target.value})} options={[{label:'USD - US Dollar', value:'USD'},{label:'EUR - Euro', value:'EUR'},{label:'GBP - British Pound', value:'GBP'}]} />
+                          <InputField label="Location" value={settings.location} onChange={(e) => setSettings({...settings, location: e.target.value})} />
                         </div>
                         <div className="pt-6 border-t border-[#FAFAFA] flex justify-end">
-                          <button onClick={()=>setCurrentView('dashboard')} style={{ backgroundColor: settings.brandColor }} className="text-white px-8 py-3 rounded-lg font-bold hover:opacity-90 transition-all">Save Changes</button>
+                          <button onClick={() => setCurrentView('dashboard')} style={{ backgroundColor: settings.brandColor }} className="text-white px-8 py-3.5 rounded-lg font-bold hover:opacity-90 transition-all w-full md:w-auto">Save Changes</button>
                         </div>
                       </div>
                     </div>
                   )}
 
-                  {/* ── MEMBERS TAB ──
-                      Shows current workspace members and an invite form.
-                      The invite section is locked behind an Organisation plan upgrade gate on the free plan. */}
                   {activeSettingsTab === 'members' && (
                     <div className="space-y-6">
-                      {/* Current members table */}
-                      <div className="p-8 border border-[#E1E1E1] rounded-xl bg-white space-y-6">
-                        <div className="flex items-center justify-between">
+                      <div className="p-5 md:p-8 border border-[#E1E1E1] rounded-xl bg-white space-y-6">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                           <h3 className="font-bold text-base">Workspace Members</h3>
-                          <span className="px-3 py-1 rounded-full bg-[#FAFAFA] border border-[#E1E1E1] text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">{members.length} member{members.length !== 1 ? 's' : ''}</span>
+                          <span className="px-3 py-1 rounded-full bg-[#FAFAFA] border border-[#E1E1E1] text-[10px] font-bold uppercase tracking-wider text-[#6B7280] w-fit">{members.length} member{members.length !== 1 ? 's' : ''}</span>
                         </div>
-
-                        <div className="border border-[#E1E1E1] rounded-xl overflow-hidden">
-                          <table className="w-full text-left">
+                        <div className="border border-[#E1E1E1] rounded-xl overflow-x-auto no-scrollbar">
+                          <table className="w-full text-left min-w-[500px]">
                             <thead className="bg-[#FAFAFA] border-b border-[#E1E1E1]">
                               <tr>
-                                <th className="px-6 py-3 text-[10px] font-bold text-[#6B7280] uppercase tracking-widest">Member</th>
-                                <th className="px-6 py-3 text-[10px] font-bold text-[#6B7280] uppercase tracking-widest">Role</th>
-                                <th className="px-6 py-3 text-[10px] font-bold text-[#6B7280] uppercase tracking-widest">Status</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-[#6B7280] uppercase tracking-widest">Member</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-[#6B7280] uppercase tracking-widest">Role</th>
+                                <th className="px-6 py-4 text-[10px] font-bold text-[#6B7280] uppercase tracking-widest">Status</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-[#E1E1E1]">
                               {members.map(m => (
-                                <tr key={m.id} className="h-14">
+                                <tr key={m.id} className="h-16 hover:bg-[#FAFAFA]/50 transition-colors">
                                   <td className="px-6">
                                     <p className="text-sm font-bold">{m.name}</p>
                                     <p className="text-xs text-[#6B7280]">{m.email}</p>
@@ -2008,166 +1808,157 @@ const { workspaceName } = useAuth();
                         </div>
                       </div>
 
-                      {/* INVITE SECTION — frosted lock overlay for free plan users
-                          Clicking "Upgrade to Organisation" opens the pricing modal */}
-                      <div className="relative p-8 border border-[#E1E1E1] rounded-xl bg-white space-y-6 overflow-hidden">
-                        {/* Lock overlay — covers the invite form for free plan */}
-                        <div className="absolute inset-0 bg-white/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center rounded-xl">
-                          <div className="w-12 h-12 rounded-full bg-[#F0F4FF] border border-[#E1E1E1] flex items-center justify-center mb-4">
-                            <Lock size={20} style={{ color: settings.brandColor }} />
+                      <div className="relative p-5 md:p-8 border border-[#E1E1E1] rounded-xl bg-white space-y-6 overflow-hidden min-h-[300px] flex flex-col justify-center">
+                        <div className="absolute inset-0 bg-white/80 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center rounded-xl px-6 py-10">
+                          <div className="w-14 h-14 rounded-full bg-[#F0F4FF] border border-[#E1E1E1] flex items-center justify-center mb-5">
+                            <Lock size={24} style={{ color: settings.brandColor }} />
                           </div>
-                          <p className="text-base font-bold text-[#010101] mb-1">Organisation Plan Required</p>
-                          <p className="text-sm text-[#6B7280] text-center max-w-xs mb-5">Invite team members and collaborate on invoices with the Organisation plan.</p>
-                          <div className="flex flex-col items-center gap-2">
-                            {/* Opens the pricing modal to show all plan options */}
+                          <p className="text-lg font-bold text-[#010101] mb-2 text-center">Organisation Plan Required</p>
+                          <p className="text-sm text-[#6B7280] text-center max-w-sm mb-6 leading-relaxed">Invite team members and collaborate on invoices with the Organisation plan.</p>
+                          <div className="flex flex-col items-center gap-3 w-full max-w-[280px]">
                             <button
                               style={{ backgroundColor: settings.brandColor }}
-                              className="text-white px-6 py-2.5 rounded-lg font-bold text-sm hover:opacity-90 transition-all"
+                              className="text-white px-6 py-3 rounded-lg font-bold text-sm hover:opacity-90 transition-all w-full shadow-lg shadow-blue-200"
                               onClick={() => setIsPricingModalOpen(true)}
                             >
                               Upgrade to Organisation
                             </button>
-                            <p className="text-[11px] text-[#6B7280]">From $29/month · Unlimited members</p>
+                            <p className="text-[11px] text-[#6B7280]">From $29/month · Cancel anytime</p>
                           </div>
                         </div>
-
-                        {/* Background invite form (blurred by the overlay above) */}
                         <h3 className="font-bold text-base">Invite Members</h3>
                         <p className="text-sm text-[#6B7280]">Invite your team to collaborate on invoices and manage clients together.</p>
-                        <div className="flex gap-3">
-                          <input type="email" placeholder="colleague@company.com" className="flex-1 h-[48px] px-4 rounded-[8px] border border-[#E1E1E1] bg-white outline-none text-sm" />
-                          <button className="h-[48px] px-6 rounded-lg text-white font-bold text-sm" style={{ backgroundColor: settings.brandColor }}>Send Invite</button>
-                        </div>
-                        <div className="p-4 bg-[#FAFAFA] border border-[#E1E1E1] rounded-lg">
-                          <p className="text-xs text-[#6B7280]">Members can view invoices, create drafts, and manage clients. Owners have full admin access.</p>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                          <input type="email" disabled placeholder="colleague@company.com" className="flex-1 h-[48px] px-4 rounded-[8px] border border-[#E1E1E1] bg-gray-50 outline-none text-sm" />
+                          <button disabled className="h-[48px] px-6 rounded-lg text-white font-bold text-sm opacity-50" style={{ backgroundColor: settings.brandColor }}>Send Invite</button>
                         </div>
                       </div>
                     </div>
                   )}
 
-                  {/* ── PAYOUT TAB ──
-                      Tax ID, bank name, account details, and a verification flow for escrow payouts */}
                   {activeSettingsTab === 'payout' && (
                     <div className="space-y-6">
-                      {/* Escrow payout explainer banner */}
-                      <div className="p-6 border border-purple-100 bg-purple-50 rounded-xl flex items-start gap-4">
+                      <div className="p-5 md:p-6 border border-purple-100 bg-purple-50 rounded-xl flex items-start gap-4">
                         <div className="w-10 h-10 rounded-lg bg-white border border-purple-100 flex items-center justify-center flex-shrink-0">
-                          <Landmark size={18} className="text-purple-600" />
+                          <Landmark size={20} className="text-purple-600" />
                         </div>
-                        <div>
-                          <p className="font-bold text-[#010101] text-sm">DanPay Escrow Payout</p>
-                          <p className="text-xs text-[#6B7280] mt-1 leading-relaxed">When a client pays into an escrow account, funds are held securely until you release them. Configure your bank details below to enable payouts to your account.</p>
+                        <div className="space-y-1">
+                          <p className="font-bold text-[#010101] text-sm">DanPay Escrow Payouts</p>
+                          <p className="text-xs text-[#6B7280] leading-relaxed">Configure your bank details to enable automatic payouts from released escrow funds. Payouts are typically processed within 2-3 business days.</p>
                         </div>
                       </div>
 
-                      <div className="p-8 border border-[#E1E1E1] rounded-xl bg-white space-y-6">
-                        <h3 className="font-bold text-base">Tax & Identity</h3>
-
-                        {/* Tax ID input — required for compliance */}
-                        <div className="space-y-2">
-                          <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Tax ID / EIN</label>
-                          <div className="relative">
-                            <Hash size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B7280]" />
-                            <input
-                              type="text"
-                              placeholder="XX-XXXXXXX"
-                              value={payoutSettings.taxId}
-                              onChange={e => setPayoutSettings(p => ({ ...p, taxId: e.target.value, verified: false }))}
-                              className="w-full h-[48px] pl-10 pr-4 rounded-[8px] border border-[#E1E1E1] bg-white outline-none focus:border-[#2563EB] transition-colors text-sm"
-                            />
-                          </div>
-                          <p className="text-[11px] text-[#6B7280]">Required for compliance and tax reporting on escrow payouts.</p>
-                        </div>
-
-                        <div className="pt-4 border-t border-[#E1E1E1] space-y-6">
-                          <h3 className="font-bold text-base">Bank Account Details</h3>
-
-                          {/* Bank name with icon prefix */}
+                      <div className="p-5 md:p-8 border border-[#E1E1E1] rounded-xl bg-white space-y-8">
+                        <section className="space-y-5">
+                          <h3 className="font-bold text-sm text-[#6B7280] uppercase tracking-widest">Tax & Identity</h3>
                           <div className="space-y-2">
-                            <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Bank Name</label>
+                            <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Tax ID / EIN</label>
                             <div className="relative">
-                              <Building2 size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B7280]" />
+                              <Hash size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B7280]" />
                               <input
                                 type="text"
-                                placeholder="e.g. Chase, Wells Fargo"
-                                value={payoutSettings.bankName}
-                                onChange={e => setPayoutSettings(p => ({ ...p, bankName: e.target.value, verified: false }))}
-                                className="w-full h-[48px] pl-10 pr-4 rounded-[8px] border border-[#E1E1E1] bg-white outline-none focus:border-[#2563EB] transition-colors text-sm"
+                                placeholder="XX-XXXXXXX"
+                                value={payoutSettings.taxId}
+                                onChange={e => setPayoutSettings(p => ({ ...p, taxId: e.target.value, verified: false }))}
+                                className="w-full h-[48px] pl-11 pr-4 rounded-[8px] border border-[#E1E1E1] bg-white outline-none focus:border-[#2563EB] transition-colors text-sm"
+                              />
+                            </div>
+                            <p className="text-[11px] text-[#6B7280]">Required for compliance on payouts exceeding local thresholds.</p>
+                          </div>
+                        </section>
+
+                        <section className="pt-8 border-t border-[#FAFAFA] space-y-6">
+                          <h3 className="font-bold text-sm text-[#6B7280] uppercase tracking-widest">Bank Destination</h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div className="space-y-2">
+                              <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Bank Name</label>
+                              <div className="relative">
+                                <Building2 size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B7280]" />
+                                <input
+                                  type="text"
+                                  placeholder="e.g. JPMorgan Chase"
+                                  value={payoutSettings.bankName}
+                                  onChange={e => setPayoutSettings(p => ({ ...p, bankName: e.target.value, verified: false }))}
+                                  className="w-full h-[48px] pl-11 pr-4 rounded-[8px] border border-[#E1E1E1] bg-white outline-none focus:border-[#2563EB] transition-colors text-sm"
+                                />
+                              </div>
+                            </div>
+                            <InputField
+                              label="Account Holder"
+                              placeholder="Full legal name"
+                              value={payoutSettings.accountName}
+                              onChange={e => setPayoutSettings(p => ({ ...p, accountName: e.target.value, verified: false }))}
+                            />
+                            <div className="md:col-span-2 space-y-2">
+                              <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Account Number</label>
+                              <input
+                                type="text"
+                                placeholder="Your bank account number"
+                                value={payoutSettings.accountNumber}
+                                onChange={e => setPayoutSettings(p => ({ ...p, accountNumber: e.target.value, verified: false }))}
+                                className="w-full h-[48px] px-4 rounded-[8px] border border-[#E1E1E1] bg-white outline-none focus:border-[#2563EB] transition-colors text-sm font-mono tracking-wider"
                               />
                             </div>
                           </div>
 
-                          <InputField
-                            label="Account Holder Name"
-                            placeholder="Full name or business name"
-                            value={payoutSettings.accountName}
-                            onChange={e => setPayoutSettings(p => ({ ...p, accountName: e.target.value, verified: false }))}
-                          />
-
-                          <div className="space-y-2">
-                            <label className="text-[11px] font-bold uppercase tracking-widest text-[#6B7280]">Account Number</label>
-                            <input
-                              type="text"
-                              placeholder="Your bank account number"
-                              value={payoutSettings.accountNumber}
-                              onChange={e => setPayoutSettings(p => ({ ...p, accountNumber: e.target.value, verified: false }))}
-                              className="w-full h-[48px] px-4 rounded-[8px] border border-[#E1E1E1] bg-white outline-none focus:border-[#2563EB] transition-colors text-sm"
-                            />
-                          </div>
-
-                          {/* Verification state: success banner or verify CTA */}
                           {payoutSettings.verified ? (
-                            <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-100 rounded-lg">
-                              <BadgeCheck size={20} className="text-green-600 flex-shrink-0" />
+                            <div className="flex items-center gap-4 p-5 bg-green-50 border border-green-100 rounded-xl">
+                              <BadgeCheck size={24} className="text-green-600 flex-shrink-0" />
                               <div>
                                 <p className="text-sm font-bold text-green-700">Bank account verified</p>
-                                <p className="text-xs text-green-600">Escrow payouts will be sent to {payoutSettings.bankName} · ···{payoutSettings.accountNumber.slice(-4)}</p>
+                                <p className="text-xs text-green-600">Payouts enabled to {payoutSettings.bankName} (··{payoutSettings.accountNumber.slice(-4)})</p>
                               </div>
                             </div>
                           ) : (
                             <button
                               onClick={handleBankVerification}
                               disabled={!payoutSettings.bankName || !payoutSettings.accountNumber || !payoutSettings.accountName || payoutSettings.verifying}
-                              className="w-full h-[52px] rounded-lg border-2 font-bold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                              className="w-full h-[54px] rounded-lg border-2 font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
                               style={{ borderColor: settings.brandColor, color: settings.brandColor }}
                             >
                               {payoutSettings.verifying ? (
-                                <><RefreshCw size={16} className="animate-spin" /> Verifying account...</>
+                                <><RefreshCw size={18} className="animate-spin" /> Processing verification...</>
                               ) : (
-                                <><BadgeCheck size={16} /> Verify Bank Account</>
+                                <><BadgeCheck size={18} /> Verify Bank Destination</>
                               )}
                             </button>
                           )}
 
-                          {/* Micro-deposit warning note */}
                           <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-100 rounded-lg">
                             <AlertTriangle size={16} className="text-amber-500 flex-shrink-0 mt-0.5" />
-                            <p className="text-xs text-amber-700 leading-relaxed">DanPay may send a small test deposit (under $1) to verify your account. This will be reflected in your next payout statement.</p>
+                            <p className="text-xs text-amber-700 leading-relaxed">Ensure your bank details are correct. Incorrect information may lead to delayed payouts or failed transfers.</p>
                           </div>
-                        </div>
+                        </section>
 
-                        <div className="pt-6 border-t border-[#E1E1E1] flex justify-end">
+                        <div className="pt-6 border-t border-[#FAFAFA] flex justify-end">
                           <button
-                            onClick={() => alert('Payout settings saved!')}
+                            onClick={() => alert('Payout configurations updated!')}
                             style={{ backgroundColor: settings.brandColor }}
-                            className="text-white px-8 py-3 rounded-lg font-bold hover:opacity-90 transition-all"
+                            className="text-white px-8 py-3.5 rounded-lg font-bold hover:opacity-90 transition-all w-full md:w-auto"
                           >
-                            Save Payout Settings
+                            Update Payout Settings
                           </button>
                         </div>
                       </div>
                     </div>
                   )}
 
-                  {/* Security and Notifications tabs — placeholder content */}
                   {activeSettingsTab === 'security' && (
-                    <div className="p-8 border border-[#E1E1E1] rounded-xl bg-white">
-                      <p className="text-sm text-[#6B7280]">Security settings coming soon.</p>
+                    <div className="p-6 md:p-10 border border-[#E1E1E1] rounded-xl bg-white text-center space-y-4">
+                      <Shield size={40} className="mx-auto text-[#6B7280] opacity-20" />
+                      <div>
+                        <h3 className="font-bold text-lg">Security Settings</h3>
+                        <p className="text-sm text-[#6B7280] mt-1 max-w-xs mx-auto">Password management and Two-Factor Authentication (2FA) options are coming in the next update.</p>
+                      </div>
                     </div>
                   )}
                   {activeSettingsTab === 'notifications' && (
-                    <div className="p-8 border border-[#E1E1E1] rounded-xl bg-white">
-                      <p className="text-sm text-[#6B7280]">Notification preferences coming soon.</p>
+                    <div className="p-6 md:p-10 border border-[#E1E1E1] rounded-xl bg-white text-center space-y-4">
+                      <BellRing size={40} className="mx-auto text-[#6B7280] opacity-20" />
+                      <div>
+                        <h3 className="font-bold text-lg">Notification Preferences</h3>
+                        <p className="text-sm text-[#6B7280] mt-1 max-w-xs mx-auto">Configure when and how you want to be alerted about invoice payments and activities.</p>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -2178,18 +1969,13 @@ const { workspaceName } = useAuth();
         </div>
       </main>
 
-      {/* ─────────────────────────────────────────────
-          MOBILE BOTTOM NAVIGATION
-          Fixed tab bar on mobile — uses mobileMenuItems which excludes Receipts and Analytics.
-          Receipts are accessible via the Invoices sub-tab on mobile.
-          ───────────────────────────────────────────── */}
+      {/* MOBILE BOTTOM NAVIGATION */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[#E1E1E1] z-30 flex items-center justify-around px-2 h-16 safe-area-bottom">
         {mobileMenuItems.map((item) => (
           <button
             key={item.id}
             onClick={() => {
               setCurrentView(item.id);
-              // Reset the mobile sub-tab to invoices whenever the user navigates to Invoices
               if (item.id === 'invoices') setInvoiceMobileTab('invoices');
             }}
             className="flex flex-col items-center justify-center gap-1 flex-1 py-2 transition-all"
@@ -2201,49 +1987,41 @@ const { workspaceName } = useAuth();
         ))}
       </nav>
 
-      {/* MOBILE FAB: Floating action button for quick invoice/client creation on mobile */}
       <FAB
         brandColor={settings.brandColor}
         onNewInvoice={() => setCurrentView('create-invoice')}
         onNewClient={() => setIsClientDrawerOpen(true)}
       />
 
-      {/* ─────────────────────────────────────────────
-          DRAWER: Add New Client
-          Slides in from the right; contains a labeled form for client details
-          ───────────────────────────────────────────── */}
+      {/* DRAWER: Add New Client */}
       <AnimatePresence>
         {isClientDrawerOpen && (
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsClientDrawerOpen(false)} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-[60]" />
-            <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="fixed right-0 top-0 h-full w-full max-w-[440px] bg-white border-l border-[#E1E1E1] z-[70] p-10 flex flex-col">
-              <div className="flex justify-between items-center mb-10 text-left">
-                <h2 className="text-2xl font-bold text-[#010101]">New Client Profile</h2>
+            <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="fixed right-0 top-0 h-full w-full max-w-[440px] bg-white border-l border-[#E1E1E1] z-[70] p-6 md:p-10 flex flex-col">
+              <div className="flex justify-between items-center mb-8 text-left">
+                <h2 className="text-xl md:text-2xl font-bold text-[#010101]">New Client Profile</h2>
                 <button onClick={() => setIsClientDrawerOpen(false)} className="p-2 hover:bg-[#FAFAFA] rounded-full"><X size={24}/></button>
               </div>
-              <form onSubmit={handleAddClient} className="flex-1 space-y-6 text-left">
-                <InputField label="Name" name="clientName" placeholder="Jane Doe" />
-                <InputField label="Email" name="clientEmail" type="email" placeholder="billing@client.com" />
+              <form onSubmit={handleAddClient} className="flex-1 space-y-5 text-left">
+                <InputField label="Name *" name="clientName" placeholder="Jane Doe" />
+                <InputField label="Email *" name="clientEmail" type="email" placeholder="billing@client.com" />
                 <InputField label="Company Name (optional)" name="clientCompany" placeholder="Acme Corp" />
                 <InputField label="Address (optional)" name="clientAddress" placeholder="123 Main St, City" />
-                <button type="submit" style={{ backgroundColor: settings.brandColor }} className="w-full h-[56px] text-white rounded-lg font-bold text-lg hover:opacity-90 transition-all">Save Client Profile</button>
+                <button type="submit" style={{ backgroundColor: settings.brandColor }} className="w-full h-[52px] text-white rounded-lg font-bold text-base hover:opacity-90 transition-all">Save Client Profile</button>
               </form>
             </motion.div>
           </>
         )}
       </AnimatePresence>
 
-      {/* ─────────────────────────────────────────────
-          DRAWER: Invoice Detail
-          Full invoice breakdown with line items, escrow account block, payment actions
-          ───────────────────────────────────────────── */}
+      {/* DRAWER: Invoice Detail */}
       <AnimatePresence>
         {selectedInvoice && (
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedInvoice(null)} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-[60]" />
             <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="fixed right-0 top-0 h-full w-full md:max-w-[480px] bg-white border-l border-[#E1E1E1] z-[70] flex flex-col overflow-y-auto">
               
-              {/* Drawer header with invoice ID */}
               <div className="flex justify-between items-center p-5 md:p-8 border-b border-[#E1E1E1] sticky top-0 bg-white z-10">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mb-1">Invoice</p>
@@ -2252,15 +2030,13 @@ const { workspaceName } = useAuth();
                 <button onClick={() => setSelectedInvoice(null)} className="p-2 hover:bg-[#FAFAFA] rounded-full border border-[#E1E1E1]"><X size={20}/></button>
               </div>
 
-              <div className="p-5 md:p-8 space-y-6 md:space-y-8 flex-1">
-                {/* Status, type, and escrow badges */}
+              <div className="p-5 md:p-8 space-y-6 md:space-y-8 flex-1 text-left">
                 <div className="flex flex-wrap items-center gap-2">
                   {(() => { const s={Pending:'bg-yellow-50 text-yellow-600',Paid:'bg-green-50 text-green-600',Overdue:'bg-red-50 text-red-500',Sent:'bg-blue-50 text-blue-600',Draft:'bg-gray-100 text-gray-500'}; return <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${s[selectedInvoice.status]||'bg-gray-100 text-gray-500'}`}>{selectedInvoice.status}</span>; })()}
                   <span className="px-3 py-1 rounded-full bg-[#FAFAFA] border border-[#E1E1E1] text-[10px] font-bold uppercase text-[#6B7280]">{selectedInvoice.type === 'recurring' ? '↻ Recurring' : '· One-Time'}</span>
                   {selectedInvoice.escrow && <EscrowBadge />}
                 </div>
 
-                {/* Client info row — name and email */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mb-1">Client</p>
@@ -2276,7 +2052,6 @@ const { workspaceName } = useAuth();
                   {selectedInvoice.dueDate && <div><p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mb-1">Due Date</p><p className="font-bold text-sm">{selectedInvoice.dueDate}</p></div>}
                 </div>
 
-                {/* Line items breakdown */}
                 {selectedInvoice.items && selectedInvoice.items.length > 0 && (
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mb-3">Line Items</p>
@@ -2295,28 +2070,23 @@ const { workspaceName } = useAuth();
                   </div>
                 )}
 
-                {/* Discount / Tax / Total summary block */}
                 <div className="bg-[#FAFAFA] border border-[#E1E1E1] rounded-lg p-4 md:p-5 space-y-2">
                   {selectedInvoice.discount > 0 && <div className="flex justify-between text-sm"><span className="text-[#6B7280]">Discount</span><span className="font-bold text-green-600">-{currencySymbol}{Number(selectedInvoice.discount).toLocaleString()}</span></div>}
                   {selectedInvoice.tax > 0 && <div className="flex justify-between text-sm"><span className="text-[#6B7280]">Tax (VAT {selectedInvoice.tax}%)</span><span className="font-bold">{currencySymbol}{((selectedInvoice.items||[]).reduce((a,i)=>a+(i.qty*i.rate),0) * selectedInvoice.tax / 100).toLocaleString()}</span></div>}
                   <div className="flex justify-between text-base border-t border-[#E1E1E1] pt-2 mt-2"><span className="font-bold">Total</span><span className="font-bold text-xl">{currencySymbol}{Number(selectedInvoice.amount).toLocaleString()}</span></div>
                 </div>
 
-                {/* Notes section — only shown if notes were added */}
                 {selectedInvoice.notes && (
                   <div><p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mb-2">Notes</p><p className="text-sm text-[#6B7280] bg-[#FAFAFA] border border-[#E1E1E1] rounded-lg p-4 leading-relaxed">{selectedInvoice.notes}</p></div>
                 )}
 
-                {/* ── ESCROW ACCOUNT DETAILS BLOCK ──
-                    Displayed when the invoice was created with escrow enabled.
-                    Each field is individually copyable via the clipboard icon. */}
                 {selectedInvoice.escrow && (
                   <div className="border border-purple-100 rounded-xl overflow-hidden">
                     <div className="bg-purple-50 px-5 py-4 flex items-center gap-3 border-b border-purple-100">
                       <Landmark size={16} className="text-purple-600 flex-shrink-0" />
                       <div>
-                        <p className="text-xs font-bold text-purple-700 uppercase tracking-widest">DanPay Escrow Account</p>
-                        <p className="text-[11px] text-purple-500 mt-0.5">Client pays to this account — funds held until you release</p>
+                        <p className="text-xs font-bold text-purple-700 uppercase tracking-widest">Virtual One-Time Account</p>
+                        <p className="text-[11px] text-purple-500 mt-0.5">Client pays to this unique account — expires after payment</p>
                       </div>
                     </div>
                     <div className="p-5 space-y-4 bg-white">
@@ -2328,35 +2098,31 @@ const { workspaceName } = useAuth();
                         { label: 'Payment Reference', value: selectedInvoice.escrow.reference },
                       ].map(field => (
                         <div key={field.label} className="flex items-center justify-between">
-                          <div>
+                          <div className="min-w-0 pr-3">
                             <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280]">{field.label}</p>
-                            <p className="text-sm font-bold text-[#010101] mt-0.5">{field.value}</p>
+                            <p className="text-sm font-bold text-[#010101] mt-0.5 truncate">{field.value}</p>
                           </div>
-                          {/* Copy-to-clipboard button for each field */}
                           <button
                             onClick={() => navigator.clipboard.writeText(field.value).catch(() => {})}
-                            className="p-2 hover:bg-[#FAFAFA] rounded-lg border border-[#E1E1E1] text-[#6B7280] transition-colors"
+                            className="p-2 hover:bg-[#FAFAFA] rounded-lg border border-[#E1E1E1] text-[#6B7280] transition-colors flex-shrink-0"
                           >
                             <Copy size={13} />
                           </button>
                         </div>
                       ))}
                     </div>
-                    {/* Escrow status indicator */}
                     <div className="px-5 py-4 bg-purple-50 border-t border-purple-100 flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-purple-600">Escrow Status</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-purple-600">Account Status</span>
                       <span className="px-3 py-1 rounded-full bg-white border border-purple-200 text-[10px] font-bold uppercase text-purple-700 capitalize">{selectedInvoice.escrow.status}</span>
                     </div>
                   </div>
                 )}
 
-                {/* Mark as paid button — only shown if not already paid */}
                 {selectedInvoice.status !== 'Paid' && (
                   <div className="border border-[#E1E1E1] rounded-lg p-4 md:p-5 bg-[#FAFAFA] space-y-3">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280]">Payment Confirmation</p>
                     <button
                       onClick={() => {
-                        // Mark invoice as paid in state; if escrow, credit wallet balance
                         const updated = invoices.map(i => i.id === selectedInvoice.id ? {...i, status: 'Paid'} : i);
                         setInvoices(updated);
                         const updatedInvoice = {...selectedInvoice, status: 'Paid'};
@@ -2371,7 +2137,6 @@ const { workspaceName } = useAuth();
                   </div>
                 )}
 
-                {/* Paid confirmation banner */}
                 {selectedInvoice.status === 'Paid' && (
                   <div className="flex items-center gap-3 p-4 bg-green-50 border border-green-100 rounded-lg">
                     <CheckCircle2 size={18} className="text-green-600 flex-shrink-0" />
@@ -2382,7 +2147,6 @@ const { workspaceName } = useAuth();
                   </div>
                 )}
 
-                {/* Payment reminder button for pending or overdue invoices */}
                 {(selectedInvoice.status === 'Pending' || selectedInvoice.status === 'Overdue') && (
                   <div className="border border-[#E1E1E1] rounded-lg p-4 md:p-5 bg-[#FAFAFA]">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mb-3">Payment Reminder</p>
@@ -2401,7 +2165,6 @@ const { workspaceName } = useAuth();
                 )}
               </div>
 
-              {/* Drawer footer: Download txt + Share */}
               <div className="p-5 md:p-8 border-t border-[#E1E1E1] flex gap-3">
                 <button
                   onClick={() => { const content = `INVOICE ${selectedInvoice.id}\nClient: ${selectedInvoice.client}\nEmail: ${selectedInvoice.clientEmail || 'N/A'}\nDate: ${selectedInvoice.date}\nAmount: ${currencySymbol}${Number(selectedInvoice.amount).toLocaleString()}\nStatus: ${selectedInvoice.status}${selectedInvoice.escrow ? `\n\nEscrow Account: ${selectedInvoice.escrow.accountNumber}\nRouting: ${selectedInvoice.escrow.routingNumber}\nRef: ${selectedInvoice.escrow.reference}` : ''}`; const a=document.createElement('a'); a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(content); a.download=`${selectedInvoice.id}.txt`; a.click(); }}
@@ -2422,10 +2185,7 @@ const { workspaceName } = useAuth();
         )}
       </AnimatePresence>
 
-      {/* ─────────────────────────────────────────────
-          DRAWER: Receipt Detail
-          Shows a paid invoice formatted as a receipt; includes line items and share/download
-          ───────────────────────────────────────────── */}
+      {/* DRAWER: Receipt Detail */}
       <AnimatePresence>
         {selectedReceipt && (
           <>
@@ -2438,7 +2198,7 @@ const { workspaceName } = useAuth();
                 </div>
                 <button onClick={() => setSelectedReceipt(null)} className="p-2 hover:bg-[#FAFAFA] rounded-full border border-[#E1E1E1]"><X size={20}/></button>
               </div>
-              <div className="p-5 md:p-8 space-y-6 md:space-y-8 flex-1">
+              <div className="p-5 md:p-8 space-y-6 md:space-y-8 flex-1 text-left">
                 <span className="inline-block px-3 py-1 rounded-full bg-green-50 text-green-600 text-[10px] font-bold uppercase">Paid</span>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -2451,7 +2211,6 @@ const { workspaceName } = useAuth();
                   <div><p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mb-1">Payment Date</p><p className="font-bold text-sm">{selectedReceipt.date}</p></div>
                   <div><p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mb-1">Invoice Ref</p><p className="font-bold text-sm">{selectedReceipt.id}</p></div>
                 </div>
-                {/* Line items on receipt */}
                 {selectedReceipt.items && selectedReceipt.items.length > 0 && (
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mb-3">Items</p>
@@ -2469,7 +2228,6 @@ const { workspaceName } = useAuth();
                     </div>
                   </div>
                 )}
-                {/* Amount paid total */}
                 <div className="bg-[#FAFAFA] border border-[#E1E1E1] rounded-lg p-4 md:p-5">
                   <div className="flex justify-between text-base"><span className="font-bold">Amount Paid</span><span className="font-bold text-xl text-green-600">{currencySymbol}{Number(selectedReceipt.amount).toLocaleString()}</span></div>
                 </div>
@@ -2495,38 +2253,33 @@ const { workspaceName } = useAuth();
         )}
       </AnimatePresence>
 
-      {/* ─────────────────────────────────────────────
-          DRAWER: Edit Client
-          Slide-in panel with editable client fields and a delete option
-          ───────────────────────────────────────────── */}
+      {/* DRAWER: Edit Client */}
       <AnimatePresence>
         {selectedClient && editClientDraft && (
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => { setSelectedClient(null); setEditClientDraft(null); }} className="fixed inset-0 bg-black/10 backdrop-blur-sm z-[60]" />
-            <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="fixed right-0 top-0 h-full w-full max-w-[440px] bg-white border-l border-[#E1E1E1] z-[70] p-10 flex flex-col">
-              <div className="flex justify-between items-center mb-10">
+            <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="fixed right-0 top-0 h-full w-full max-w-[440px] bg-white border-l border-[#E1E1E1] z-[70] p-6 md:p-10 flex flex-col">
+              <div className="flex justify-between items-center mb-8">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-[#6B7280] mb-1">Client Profile</p>
-                  <h2 className="text-2xl font-bold">{selectedClient.name}</h2>
+                  <h2 className="text-xl md:text-2xl font-bold">{selectedClient.name}</h2>
                 </div>
                 <button onClick={() => { setSelectedClient(null); setEditClientDraft(null); }} className="p-2 hover:bg-[#FAFAFA] rounded-full border border-[#E1E1E1]"><X size={20}/></button>
               </div>
-              <div className="flex-1 space-y-6 text-left">
+              <div className="flex-1 space-y-5 text-left">
                 <InputField label="Name" value={editClientDraft.name} onChange={(e) => setEditClientDraft({...editClientDraft, name: e.target.value})} />
                 <InputField label="Email" type="email" value={editClientDraft.email} onChange={(e) => setEditClientDraft({...editClientDraft, email: e.target.value})} />
                 <InputField label="Company Name (optional)" value={editClientDraft.company || ''} onChange={(e) => setEditClientDraft({...editClientDraft, company: e.target.value})} />
                 <InputField label="Address (optional)" value={editClientDraft.address || ''} onChange={(e) => setEditClientDraft({...editClientDraft, address: e.target.value})} />
                 <InputField label="Location" value={editClientDraft.location || ''} onChange={(e) => setEditClientDraft({...editClientDraft, location: e.target.value})} />
                 <div className="pt-4 space-y-3">
-                  {/* Save edits to client — updates the clients array by id */}
                   <button
                     onClick={() => { setClients(clients.map(c => c.id === editClientDraft.id ? editClientDraft : c)); setSelectedClient(null); setEditClientDraft(null); }}
                     style={{ backgroundColor: settings.brandColor }}
-                    className="w-full h-[56px] text-white rounded-lg font-bold text-base hover:opacity-90 transition-all"
+                    className="w-full h-[52px] text-white rounded-lg font-bold text-base hover:opacity-90 transition-all"
                   >
                     Save Changes
                   </button>
-                  {/* Delete client — removes from list and closes drawer */}
                   <button
                     onClick={() => { setClients(clients.filter(c => c.id !== selectedClient.id)); setSelectedClient(null); setEditClientDraft(null); }}
                     className="w-full h-[44px] rounded-lg border border-red-200 text-red-500 font-bold text-sm hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
@@ -2540,25 +2293,11 @@ const { workspaceName } = useAuth();
         )}
       </AnimatePresence>
 
-      {/* ─────────────────────────────────────────────
-          SHARE DRAWER — highest z-index so it slides over other drawers
-          Allows sharing the selected invoice or receipt via link or email
-          ───────────────────────────────────────────── */}
-      <ShareDrawer
-        isOpen={!!shareItem}
-        onClose={() => setShareItem(null)}
-        item={shareItem}
-        type={shareType}
-        brandColor={settings.brandColor}
-        currencySymbol={currencySymbol}
-      />
+      <ShareDrawer isOpen={!!shareItem} onClose={() => setShareItem(null)} item={shareItem} type={shareType} brandColor={settings.brandColor} currencySymbol={currencySymbol} />
     </div>
   );
-  } // This closes the function DanPay()
+}
 
-// --- NEW WRAPPER LOGIC STARTS HERE ---
-
-// This component handles the logic of what to show
 function AppContent() {
   const { isAuthenticated } = useAuth();
   
@@ -2567,8 +2306,6 @@ function AppContent() {
   });
 
   const handleAuthFinished = (isNewUser) => {
-    // Both login and signup should mark onboarding as "checked" for now
-    // logic inside AuthFlow handles the branching
     setOnboardingComplete(true);
     localStorage.setItem('onboardingDone', 'true');
   };
@@ -2584,8 +2321,6 @@ function AppContent() {
   return <DanPay />;
 }
 
-// THIS IS THE PART YOU ARE MISSING
-// It must be named "App" and it must say "export default"
 export default function App() {
   return (
     <AuthProvider>
